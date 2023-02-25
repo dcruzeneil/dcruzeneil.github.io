@@ -1,5 +1,5 @@
 ---
-title: "Machine Learning Projects"
+title: "Machine Learning Portfolio"
 listing:
   contents: posts
   sort: "date desc"
