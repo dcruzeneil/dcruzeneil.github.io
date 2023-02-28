@@ -15,7 +15,7 @@ class Perceptron:
         Finds a weight vector w, which maximizes the accuracy of linear classifier. Stops executing, either when the maximum
         number of steps have been reached, or when perfect accuracy is achieved
         
-        Paramaters:
+        Parameters:
             X (n x p - array): Collection of p features for n data points
             y (array): Collection of actual labels - used for training the algorithm 
             max_steps (int): Maximum number of times to run the code
@@ -52,7 +52,7 @@ class Perceptron:
         '''
         Given the current weight vector - w, this function predits the label for each data point in X using weighted sum!
         
-        Paramaters:
+        Parameters:
             X (n x p - array): Collection of p features for n data points
         
         Returns:
@@ -74,7 +74,7 @@ class Perceptron:
         Based on how many of the predicted labels match with the actual labels, this function returns a score for the 
         current accuracy of the classifier.
         
-        Paramaters:
+        Parameters:
             X (n x p - array): Collection of p features for n data points
             y (array): Collection of actual labels - used for training the algorithm 
         
