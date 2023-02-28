@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Neil Dcruze">
-<meta name="dcterms.date" content="2023-02-25">
+<meta name="dcterms.date" content="2023-02-28">
 <meta name="description" content="An Implementation of the Perceptron Algorithm">
 
 <title>Machine Learning - Perceptron Algorithm for Classification</title>
@@ -198,7 +198,7 @@ background-size: cover;
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">February 25, 2023</p>
+        <p class="date">February 28, 2023</p>
       </div>
     </div>
       
@@ -280,7 +280,7 @@ x_2
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(p.w)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(p.history[<span class="op">-</span><span class="dv">10</span>:]) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1.65783143 2.99270532 0.26683843]
+<pre><code>[ 1.71328294  2.81366675 -0.50209446]
 [0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 1.0]</code></pre>
 </div>
 </div>
@@ -346,14 +346,14 @@ x_2
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#max_steps - number of times we will go over the dataset</span></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>p.fit(X, y, max_steps <span class="op">=</span> <span class="dv">1500</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Clearly, we can see that the maximum score that we are able to achieve is 0.77! Furthermore, we can see that our accuracy was better off in the beginning, when the weight vector <span class="math inline">\(w\)</span> was almost random.</p>
+<p>Clearly, we can see that the maximum score that we are able to achieve is 0.74! Furthermore, we can see that our accuracy was better off in the beginning, when the weight vector <span class="math inline">\(w\)</span> was almost random.</p>
 <div class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(p.history[<span class="op">-</span><span class="dv">10</span>:]) </span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>p.visualize_score()</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(p.score(X,y))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[0.5, 0.5, 0.5, 0.68, 0.75, 0.75, 0.5, 0.77, 0.77, 0.77]
-0.77</code></pre>
+<pre><code>[0.68, 0.68, 0.68, 0.68, 0.68, 0.68, 0.74, 0.74, 0.74, 0.74]
+0.74</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <p><img src="index_files/figure-html/cell-11-output-2.png" class="img-fluid"></p>
@@ -375,21 +375,21 @@ x_2
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>p_new <span class="op">=</span> Perceptron()</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>p_new.fit(X, y, max_steps<span class="op">=</span><span class="dv">50000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Clearly, we can see that the maximum score we achieve is 0.68!</p>
-<div class="cell" data-execution_count="13">
+<p>Clearly, we can see that the maximum score we achieve is 0.76!</p>
+<div class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(p_new.history[<span class="op">-</span><span class="dv">10</span>:]) </span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>p_new.visualize_score()</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(p_new.score(X,y))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[0.68, 0.68, 0.68, 0.68, 0.69, 0.69, 0.69, 0.69, 0.68, 0.68]
-0.68</code></pre>
+<pre><code>[0.5, 0.72, 0.72, 0.77, 0.67, 0.77, 0.77, 0.69, 0.76, 0.76]
+0.76</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <p><img src="index_files/figure-html/cell-14-output-2.png" class="img-fluid"></p>
 </div>
 </div>
-<p>Even in the final line we achieve, we can see that it does not perfectly separate the data into two regions! By running for <span class="math inline">\(50,000\)</span> data points instead of <span class="math inline">\(1500\)</span>, our score did not change a lot - and in fact, deteriorated in this case. Therefore, we can tell that if the data is not linearly separable - the perceptron does not converege!</p>
-<div class="cell" data-execution_count="14">
+<p>Even in the final line we achieve, we can see that it does not perfectly separate the data into two regions! By running for <span class="math inline">\(50,000\)</span> data points instead of <span class="math inline">\(1500\)</span>, our score did not change a lot. Therefore, we can tell that if the data is not linearly separable - the perceptron does not converege!</p>
+<div class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.scatter(X[:,<span class="dv">0</span>], X[:,<span class="dv">1</span>], c <span class="op">=</span> y)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> p_new.draw_line(p_new.w, <span class="op">-</span><span class="dv">4</span>, <span class="dv">4</span>)</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -400,8 +400,74 @@ x_2
 </div>
 </div>
 </section>
-<section id="perceptron-algorithm-in-n-5-dimension-5-features" class="level1">
-<h1>Perceptron Algorithm in <i>n</i> = 5 Dimension (5 Features)</h1>
+<section id="perceptron-algorithm-in-p-5-dimension-5-features" class="level1">
+<h1>Perceptron Algorithm in <i>p</i> = 5 Dimension (5 Features)</h1>
+<p>In the case when we were working with <span class="math inline">\(p=2\)</span> features (that is, <span class="math inline">\(5\)</span>-Dimensions), the classifier was a straight line (that is, <span class="math inline">\(1\)</span>-Dimensional). In the situation where we are working with <span class="math inline">\(p=5\)</span> features, the classifier will be a <span class="math inline">\(4\)</span>-Dimensional hyerplane.</p>
+<div class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_blobs</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> perceptron <span class="im">import</span> Perceptron</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">12345</span>)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_blobs(n_samples <span class="op">=</span> n, n_features <span class="op">=</span> features)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In the above code, the <i>make_blobs</i> function creates <span class="math inline">\(100\)</span> data points, with <span class="math inline">\(5\)</span> features each. Because of this we can say that, <span class="math inline">\(X\)</span> is a <span class="math inline">\(100\)</span> x <span class="math inline">\(5\)</span> matrix. Since we have not specified the centers, <i>make_blobs</i> will automatically create <span class="math inline">\(3\)</span> clusters. In this case, <span class="math inline">\(y=\{0,1,2,3,4\}\)</span>. We have to explicitly pass the following parameter to the constructor:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>    pFiveD <span class="op">=</span> Perceptron(w <span class="op">=</span> np.random.rand(<span class="dv">6</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This is because in our original case, since <i>features</i>=2 our weight vector <span class="math inline">\(w\)</span> had 3 elements, one weight for each feature, plus a bias term. Since, now we are dealing with <span class="math inline">\(5\)</span> features, we need <span class="math inline">\(6\)</span> terms in our weight vector.</p>
+<div class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">#creating an instance of the Perceptron class</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>pFiveD <span class="op">=</span> Perceptron(w<span class="op">=</span>np.random.rand(<span class="dv">6</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Starting with <i>max_steps</i>=1500</p>
+<div class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">#setting max-steps the same as the previous experiments</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>pFiveD.fit(X, y, max_steps <span class="op">=</span> <span class="dv">1500</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can see that the max score we are able to obtain is <span class="math inline">\(0.32\)</span>!</p>
+<div class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pFiveD.history[<span class="op">-</span><span class="dv">10</span>:])</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>pFiveD.visualize_score()</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pFiveD.score(X,y))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[0.32, 0.32, 0.32, 0.32, 0.32, 0.32, 0.32, 0.32, 0.32, 0.32]
+0.32</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-19-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Trying the same fit, but with <i>max_steps</i>=50000:</p>
+<div class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>pFiveD <span class="op">=</span> Perceptron(w<span class="op">=</span>np.random.rand(<span class="dv">6</span>))</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>pFiveD.fit(X, y, max_steps <span class="op">=</span> <span class="dv">50000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can see that the max score we are able to obtain is <span class="math inline">\(0.32\)</span>!</p>
+<div class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pFiveD.history[<span class="op">-</span><span class="dv">10</span>:])</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>pFiveD.visualize_score()</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pFiveD.score(X,y))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[0.32, 0.32, 0.32, 0.32, 0.32, 0.32, 0.32, 0.32, 0.32, 0.32]
+0.32</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-21-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Since the maximum score, we are able to achieve is <span class="math inline">\(0.32\)</span>, I believe that the data is not linearly separable!</p>
+</section>
+<section id="runtime-complexity-of-a-single-iteration-of-the-perceptron-algorithm-update" class="level1">
+<h1>Runtime Complexity of a Single Iteration of the Perceptron algorithm update</h1>
+<p>The runtime complexity of a single iteration of the Perceptron algorithm update depends on the number of features of the data - <span class="math inline">\(p\)</span>, but not on the number of data points - <span class="math inline">\(n\)</span>. Specifically, the runtime complexity is proportional to the number of features - <span class="math inline">\(p\)</span>. This is because for each feature, we need to multiply its value by the corresponding weight and then sum these products together.</p>
+<p>If there are <span class="math inline">\(p\)</span> features, the runtime complexity of a single iteration of the Perceptron algorithm update is <span class="math inline">\(O(p)\)</span>!</p>
+<p>The runtime complexity of a single update does not depend on the number of data points because the perceptron algorithm updates the weights one data point at a time!</p>
 
 
 </section>
