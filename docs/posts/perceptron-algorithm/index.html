@@ -280,7 +280,7 @@ x_2
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(p.w)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(p.history[<span class="op">-</span><span class="dv">10</span>:]) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[ 1.71929051  2.78553289 -0.30455785]
+<pre><code>[1.65783143 2.99270532 0.26683843]
 [0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 1.0]</code></pre>
 </div>
 </div>
@@ -346,14 +346,14 @@ x_2
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#max_steps - number of times we will go over the dataset</span></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>p.fit(X, y, max_steps <span class="op">=</span> <span class="dv">1500</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Clearly, we can see that the maximum score that we are able to achieve is 0.71! Furthermore, we can see that our accuracy was better off in the beginning, when the weight vector <span class="math inline">\(w\)</span> was almost random.</p>
+<p>Clearly, we can see that the maximum score that we are able to achieve is 0.77! Furthermore, we can see that our accuracy was better off in the beginning, when the weight vector <span class="math inline">\(w\)</span> was almost random.</p>
 <div class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(p.history[<span class="op">-</span><span class="dv">10</span>:]) </span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>p.visualize_score()</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(p.score(X,y))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[0.51, 0.71, 0.71, 0.71, 0.71, 0.71, 0.71, 0.71, 0.78, 0.78]
-0.78</code></pre>
+<pre><code>[0.5, 0.5, 0.5, 0.68, 0.75, 0.75, 0.5, 0.77, 0.77, 0.77]
+0.77</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <p><img src="index_files/figure-html/cell-11-output-2.png" class="img-fluid"></p>
@@ -375,20 +375,20 @@ x_2
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>p_new <span class="op">=</span> Perceptron()</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>p_new.fit(X, y, max_steps<span class="op">=</span><span class="dv">50000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Clearly, we can see that the maximum score we achieve is 0.7!</p>
+<p>Clearly, we can see that the maximum score we achieve is 0.68!</p>
 <div class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(p_new.history[<span class="op">-</span><span class="dv">10</span>:]) </span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>p_new.visualize_score()</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(p_new.score(X,y))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[0.76, 0.67, 0.67, 0.67, 0.67, 0.67, 0.67, 0.67, 0.77, 0.68]
+<pre><code>[0.68, 0.68, 0.68, 0.68, 0.69, 0.69, 0.69, 0.69, 0.68, 0.68]
 0.68</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <p><img src="index_files/figure-html/cell-14-output-2.png" class="img-fluid"></p>
 </div>
 </div>
-<p>Even in the final line we achieve, we can see that it does not perfectly separate the data into two regions! By running for <span class="math inline">\(50,000\)</span> data points instead of <span class="math inline">\(1500\)</span>, our score did not change a lot. Therefore, we can tell that if the data is not linearly separable - the perceptron does not converege!</p>
+<p>Even in the final line we achieve, we can see that it does not perfectly separate the data into two regions! By running for <span class="math inline">\(50,000\)</span> data points instead of <span class="math inline">\(1500\)</span>, our score did not change a lot - and in fact, deteriorated in this case. Therefore, we can tell that if the data is not linearly separable - the perceptron does not converege!</p>
 <div class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.scatter(X[:,<span class="dv">0</span>], X[:,<span class="dv">1</span>], c <span class="op">=</span> y)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> p_new.draw_line(p_new.w, <span class="op">-</span><span class="dv">4</span>, <span class="dv">4</span>)</span>
