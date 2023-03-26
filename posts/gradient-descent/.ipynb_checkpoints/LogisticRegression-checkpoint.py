@@ -22,15 +22,15 @@ class LogisticRegression:
             
             #calculating the loss for the current weight vector
             new_loss = self.loss(X_, y)
+            new_score = self.score(X_,y)
             
             #updating the weight vector - the gradient descent update
             gradient = self.gradient_logistic_loss(X_, y)
             self.w -= alpha*gradient
             
-            #using the complement nature of loss and score to update
-            #the respective vectors - accuracy + loss = 1 
+            #appending the loss and score 
             self.loss_history.append(new_loss)
-            self.score_history.append(1-new_loss)
+            self.score_history.append(new_score)
             
             #checking the conditions to terminate the loop - when overall improvement is minimum
             if np.isclose(new_loss, prev_loss):
@@ -78,8 +78,10 @@ class LogisticRegression:
     
     #returning accuracy for current weight 
     def score(self, X, y):
-        currentScore = 1 - self.loss(X, y)
-        return currentScore
+        #this yHat is labels of 0s and 1s for calculation of the score 
+        yHat = self.predict(X)
+        yCheck = 1*(yHat == y)
+        return yCheck.mean()
     
     def draw_line(self, w, x_min, x_max):
         x = np.linspace(x_min, x_max, 101)
