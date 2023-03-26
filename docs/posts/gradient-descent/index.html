@@ -281,7 +281,7 @@ Stochastic Gradient Descent with Momentum
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>LR.fit(X, y, <span class="fl">0.1</span>, <span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>For reference, the code had saved the first weight vector. Therefore, we can visualize how well the first linear classifier performed, and its associated loss.</p>
-<div class="cell" data-execution_count="11">
+<div class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.scatter(X[:,<span class="dv">0</span>], X[:,<span class="dv">1</span>], c <span class="op">=</span> y)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> LR.draw_line(LR.initialW, <span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -294,7 +294,7 @@ Stochastic Gradient Descent with Momentum
 </div>
 </div>
 <p>We can then compare this to the visualization of the final weight vector (after performing gradient descent) - how it performed the linear classification, and its associated loss.</p>
-<div class="cell" data-execution_count="10">
+<div class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.scatter(X[:,<span class="dv">0</span>], X[:,<span class="dv">1</span>], c <span class="op">=</span> y)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> LR.draw_line(LR.w, <span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -310,6 +310,7 @@ Stochastic Gradient Descent with Momentum
 </section>
 <section id="explanation-of-important-elements-of-the-gradient-descent-algorithm" class="level1">
 <h1>Explanation of Important Elements of the Gradient Descent Algorithm</h1>
+<p>In this section of the blog post, we are going to look at some of the functions which are used in performing our <b>Logistic Regression</b> using <b>Gradient Descent</b>!</p>
 
 
 </section>
