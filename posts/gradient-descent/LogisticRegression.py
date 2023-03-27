@@ -117,9 +117,11 @@ class LogisticRegression:
         yCheck = 1*(yHat == y)
         return yCheck.mean()
     
-    def draw_line(self, w, x_min, x_max):
+    def draw_line(self, w, x_min, x_max, subplot = None):
         x = np.linspace(x_min, x_max, 101)
         y = -(w[0]*x + w[2])/w[1]
-        plt.plot(x, y, color = "black")
-    
+        if(subplot is None):
+            plt.plot(x, y, color = "black")
+        else:
+            subplot.plot(x, y, color = "black")
   
