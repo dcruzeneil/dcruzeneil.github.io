@@ -278,7 +278,7 @@ Stochastic Gradient Descent with Momentum
 </div>
 <p>We are calling the <b>fit</b> method of the LogisticRegression class. This method uses the logistic loss function to calculate the loss, and updates the weight vector, using the <b>Gradient Descent</b> algorithm. The gradient function for the logistic loss function, has been borrowed from the <a href="https://middlebury-csci-0451.github.io/CSCI-0451/lecture-notes/gradient-descent.html"> lecture notes </a> on <b>Gradient Descent</b>!</p>
 <div class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>LR.fit_stochastic(X, y, alpha <span class="op">=</span> <span class="fl">0.1</span>, max_epochs <span class="op">=</span> <span class="dv">1000</span>, batch_size <span class="op">=</span> <span class="dv">10</span>, momentum <span class="op">=</span> <span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>LR.fit(X, y, <span class="fl">0.1</span>, <span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>For reference, the code had saved the first weight vector. Therefore, we can visualize how well the first linear classifier performed, and its associated loss.</p>
 <div class="cell" data-execution_count="6">
@@ -308,83 +308,149 @@ Stochastic Gradient Descent with Momentum
 </div>
 <p>Therefore, we can clearly see how the final set of weight vector (inclusive of <b>bias</b>) has a much less associated loss, and does a much better job at performing the linear classification. This can also be seen visually, by looking at the classification in the image above (with the final weight vector), and the one above it (with the initial - random - weight vector).</p>
 </section>
+<section id="explanation-of-important-elements-of-the-regular-gradient-descent-algorithm" class="level1">
+<h1>Explanation of Important Elements of the Regular Gradient Descent Algorithm</h1>
+<p>In this section of the blog post, we are going to look at some of the functions which are used in performing our <b>Logistic Regression</b> using <b>Regular Gradient Descent</b>!</p>
+<h3 class="anchored" data-anchor-id="explanation-of-important-elements-of-the-regular-gradient-descent-algorithm">
+<b>fit</b> method:
+</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fit(<span class="va">self</span>, X, y, alpha, max_epochs):</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>        <span class="co">#creating modified feature matrix X_ with column of 1s</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        X_ <span class="op">=</span> np.append(X, np.ones((X.shape[<span class="dv">0</span>],<span class="dv">1</span>)), axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        <span class="co">#initializing random weight vectors</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.w <span class="op">=</span> np.random.rand(X_.shape[<span class="dv">1</span>])</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.initialW <span class="op">=</span> <span class="va">self</span>.w.copy() <span class="co">#solely for visualization purposes</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        <span class="co">#adding loss+score associated with initialized weight vector to respective vectors</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.loss_history.append(<span class="va">self</span>.loss(X_,y))</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.score_history.append(<span class="va">self</span>.score(X_,y)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(max_epochs):</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>            <span class="co">#updating the weight vector - the gradient descent update</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>            gradient <span class="op">=</span> <span class="va">self</span>.gradient_logistic_loss(X_, y)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.w <span class="op">-=</span> alpha<span class="op">*</span>gradient</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>            <span class="co">#appending the loss and score for the updated weight vector</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.loss_history.append(<span class="va">self</span>.loss(X_,y))</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.score_history.append(<span class="va">self</span>.score(X_,y))</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>            <span class="co">#checking the conditions to terminate the loop - when overall improvement is minimum</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>            <span class="co">#comparing the latest added loss_history with the second_latest added loss_history</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> np.isclose(<span class="va">self</span>.loss_history[<span class="op">-</span><span class="dv">1</span>], <span class="va">self</span>.loss_history[<span class="op">-</span><span class="dv">2</span>]):</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>                <span class="cf">break</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The above mentioned method is the main one, which is called to perform gradient descent, and find the optimal parameters of the weight vector <span class="math inline">\(w\)</span> - which minimizes our loss - using logistic loss! In the above function, first we pad the feature matrix <span class="math inline">\(X\)</span> with a column of <span class="math inline">\(1\)</span>s. This is done to ease the mathematics we perform, as this allows us to include the bias in the weight vector - <span class="math inline">\(w\)</span> - and perform matrix operations. We run the gradient descent algorithm for <i>max_epochs</i>, which is the maximum number of steps that the user provides us. Another situation in which we break the loop is provided in the line:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> np.isclose(<span class="va">self</span>.loss_history[<span class="op">-</span><span class="dv">1</span>], <span class="va">self</span>.loss_history[<span class="op">-</span><span class="dv">2</span>]):</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">break</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>That is, when the overall improvement in the previous and current losses is extremely low - it is a good time to stop performing gradient descent.</p>
+<h3 class="anchored">
+<b>loss</b> method:
+</h3>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> loss(<span class="va">self</span>, X, y):</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    y_hat <span class="op">=</span> X<span class="op">@</span>self.w</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">self</span>.logistic_loss(y_hat, y).mean()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The above mentioned method is the <i>loss</i> method aka the <i>Empirical Risk</i> function! We first get a predicted vector <i>y_hat</i> for the <span class="math inline">\(n\)</span> data points. An important thing to note is that for the prediction vector, we use the actual values of the <span class="math inline">\(\text{X}@\text{self.w}\)</span>, rather than converting them to <span class="math inline">\(0\)</span>s and <span class="math inline">\(1\)</span>s - as we do in our <i>predict</i> function. This is because the <i>logistic loss</i> function’s genius lies on the actual values of our prediction, and converting to <span class="math inline">\(0\)</span>s and <span class="math inline">\(1\)</span>s would rid us of the range of ways in which our prediction affects the loss!</p>
+<h3 class="anchored">
+<b>gradient_logistic_loss</b> method:
+</h3>
+<div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gradient_logistic_loss(<span class="va">self</span>, X, y):</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">#using the actual predictions - rather than 0s and 1s </span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">#to utilize the potential of the logistic loss function</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    y_hat <span class="op">=</span> X<span class="op">@</span>self.w</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.dot(<span class="va">self</span>.sigmoid(y_hat) <span class="op">-</span> y, X)<span class="op">/</span>X.shape[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This is arguably the most important function in the entire implementation of the <b>Gradient Descent</b> algorithm, as it forms the backbone for the entire update. Using multivariable calculus, it was found that the gradient of the <u>logistic loss</u> function is:</p>
+<center>
+<figure class="figure">
+<img src="gradient.png" width="400" height="200" class="figure-img">
+<figcaption class="figure-caption">
+Source - Philip Chodrow (Lecture Notes on Gradient Descent 02/22)
+</figcaption>
+</figure>
+</center>
+<p>Therefore, we first get <i>y_hat</i> prediction vector - again the actual values, rather than <span class="math inline">\(0\)</span>s and <span class="math inline">\(1\)</span>s - to use the range of values in our predictions. Now, the mathematical idea is that for each value of <span class="math inline">\(\sigma(\hat y_i) - y_i\)</span>, we want to multiply it by the corresponding row of the feature matrix <span class="math inline">\(X\)</span>, that is <span class="math inline">\(X_i\)</span>. So, at each stage, we are multiplying a <span class="math inline">\(1\)</span>x<span class="math inline">\(1\)</span> value, with a <span class="math inline">\(1\)</span>x<span class="math inline">\(p\)</span> row, therefore resulting in a <span class="math inline">\(1\)</span>x<span class="math inline">\(p\)</span> row. Then we want to add all these <span class="math inline">\(n\)</span>, <span class="math inline">\(1\)</span>x<span class="math inline">\(p\)</span> rows, that is adding the respective elements, and then taking the mean, which at this point is simply division by the number of rows. In order to avoid looping, and having to perform the multiplication for each <span class="math inline">\(i\)</span> value of <span class="math inline">\(\sigma(\hat y_i) - y_i\)</span>, and each row <span class="math inline">\(i\)</span> of feature matrix <span class="math inline">\(X\)</span>, what we do is that we take the dot product of <span class="math inline">\(\sigma(\hat y) - y\)</span> and <span class="math inline">\(X\)</span>. This means that we are multiplying a <span class="math inline">\(1\)</span>x<span class="math inline">\(n\)</span> matrix, with a <span class="math inline">\(n\)</span>x<span class="math inline">\(p\)</span> matrix - resulting in a <span class="math inline">\(1\)</span>x<span class="math inline">\(p\)</span> matrix - exactly what we want. This is the same concept as before - take <span class="math inline">\(i\)</span> value of <span class="math inline">\(\sigma(\hat y_i) - y_i\)</span>, then take the <span class="math inline">\(i\)</span>th row of feature matrix <span class="math inline">\(X\)</span>, and multiply the value of <span class="math inline">\(\sigma(\hat y_i) - y_i\)</span> by every column of the <span class="math inline">\(i\)</span>th row of the feature matrix. We perform, the same operation for all values <span class="math inline">\(i\)</span> of <span class="math inline">\(\sigma(\hat y_i) - y_i\)</span>, and all rows <span class="math inline">\(i\)</span> of the feature matrix, resulting in a <span class="math inline">\(1\)</span>x<span class="math inline">\(p\)</span> row, which is the sum of all these operations - then we can divide by the number of rows to get the average.</p>
+</section>
 <section id="stochastic-gradient-descent" class="level1">
 <h1>Stochastic Gradient Descent</h1>
-<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fit_stochastic(<span class="va">self</span>, X, y, alpha, max_epochs, batch_size, momentum <span class="op">=</span> <span class="va">False</span>):</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>        <span class="co">#creating modified feature matrix X_ with column of 1s </span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        X_ <span class="op">=</span> np.append(X, np.ones((X.shape[<span class="dv">0</span>],<span class="dv">1</span>)), axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">#setting the beta value of momentum - based on momentum True or False</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        beta <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(momentum):</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>            beta <span class="op">=</span> <span class="fl">0.8</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">#setting n as the number of rows - data points - in our feature matrix X_</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        n <span class="op">=</span> X_.shape[<span class="dv">0</span>]</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        <span class="co">#creating a temporary variable which stores the previous weight vector - useful for implementing momentum</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>        prevWeightVec <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">#initializing previous loss as inf</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        prev_loss <span class="op">=</span> np.inf</span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>        <span class="co">#maximum number of time we are cycling through the data - max_epochs </span></span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        <span class="co">#np.arange is similar to range used in above fit function</span></span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> j <span class="kw">in</span> np.arange(max_epochs):</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>            <span class="co">#adding the score and loss history for the current weight vector</span></span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>            <span class="co">#this update cannot be included in the loop of the individual batches for consistency </span></span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>            new_loss <span class="op">=</span> <span class="va">self</span>.loss(X_,y)</span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>            new_score <span class="op">=</span> <span class="va">self</span>.score(X_,y)</span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.loss_history.append(new_loss)</span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.score_history.append(new_score)</span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>            <span class="co">#creating a list of </span></span>
-<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>            order <span class="op">=</span> np.arange(n)</span>
-<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>            np.random.shuffle(order)</span>
-<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>            <span class="co">#this loop goes over the order - total number of rows (data points)</span></span>
-<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>            <span class="co">#and then creates batches out of those orders, where n (total data points) // batch_size + 1</span></span>
-<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> batch <span class="kw">in</span> np.array_split(order, n <span class="op">//</span> batch_size <span class="op">+</span> <span class="dv">1</span>):</span>
-<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>                x_batch <span class="op">=</span> X_[batch,:]</span>
-<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>                y_batch <span class="op">=</span> y[batch]</span>
-<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>                <span class="co">#performing the stochastic gradient</span></span>
-<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>                gradient <span class="op">=</span> <span class="va">self</span>.gradient_logistic_loss(x_batch, y_batch)</span>
-<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>                tempWeightVec <span class="op">=</span> <span class="va">self</span>.w</span>
-<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>                <span class="va">self</span>.w <span class="op">-=</span> (alpha <span class="op">*</span> gradient) <span class="op">+</span> (beta <span class="op">*</span> (<span class="va">self</span>.w <span class="op">-</span> prevWeightVec))</span>
-<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>                prevWeightVec <span class="op">=</span> tempWeightVec</span>
-<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>             <span class="co">#checking the conditions to terminate the loop - when overall improvement is minimum</span></span>
-<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> np.isclose(new_loss, prev_loss):</span>
-<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>                <span class="cf">break</span></span>
-<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>: </span>
-<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>                prev_loss <span class="op">=</span> new_loss</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>In addition to regular gradient descent, this blog post also implements and looks at the performance of a <b>Stochastic Gradient Descent</b>. Similar, to the regular gradient descent, we still run over the data a fixed number of times - <u>max_epochs</u>. However, in each iteration, instead of passing the complete feature matrix to the gradient function, we randomly pass a subset of certain size - <b>batch size</b> - to the gradient function. We then update the weight using the gradient of this <b>batch size</b> subset passed to the gradient function. We keep on doing this until we have made the updates for all set of points. Therefore, the weight vector <span class="math inline">\(w\)</span> gets updates multiple times in each <b>epoch</b> based on smaller subsets of the feature matrix and the related true labels. Furthermore, there is also a parameter called <i><u>momentum</u></i> in this implementation of the <b>Stochastic Gradient Function</b>, which controls the <span class="math inline">\(\beta\)</span> parameter. This is done by keeping track of the previous weight vector - <span class="math inline">\(w\)</span>.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fit_stochastic(<span class="va">self</span>, X, y, alpha, max_epochs, batch_size, momentum <span class="op">=</span> <span class="va">False</span>):</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">#creating modified feature matrix X_ with column of 1s </span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    X_ <span class="op">=</span> np.append(X, np.ones((X.shape[<span class="dv">0</span>],<span class="dv">1</span>)), axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">#initializing random weight vectors</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.w <span class="op">=</span> np.random.rand(X_.shape[<span class="dv">1</span>])</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.initialW <span class="op">=</span> <span class="va">self</span>.w.copy()</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">#adding loss+score associated with initialized weight vector to respective vectors</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.loss_history.append(<span class="va">self</span>.loss(X_,y))</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.score_history.append(<span class="va">self</span>.score(X_,y)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">#setting the beta value of momentum - based on momentum True or False</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    beta <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(momentum):</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>        beta <span class="op">=</span> <span class="fl">0.8</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">#creating a temporary variable which stores the previous weight vector - useful for implementing momentum</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    prevWeightVec <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">#setting n as the number of rows - data points - in our feature matrix X_</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> X_.shape[<span class="dv">0</span>]</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    <span class="co">#maximum number of time we are cycling through the data - max_epochs </span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>    <span class="co">#np.arange is similar to range used in above fit function</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> np.arange(max_epochs):</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>        <span class="co">#creating a list of all possible data points and shuffling</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>        order <span class="op">=</span> np.arange(n)</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>        np.random.shuffle(order)</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>        <span class="co">#this loop goes over the order - total number of rows (data points)</span></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>        <span class="co">#and then creates batches out of those orders, where n (total data points) // batch_size + 1</span></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> batch <span class="kw">in</span> np.array_split(order, n <span class="op">//</span> batch_size <span class="op">+</span> <span class="dv">1</span>):</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>            x_batch <span class="op">=</span> X_[batch,:]</span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>            y_batch <span class="op">=</span> y[batch]</span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>            <span class="co">#performing the stochastic gradient</span></span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>            gradient <span class="op">=</span> <span class="va">self</span>.gradient_logistic_loss(x_batch, y_batch)</span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a>            tempWeightVec <span class="op">=</span> <span class="va">self</span>.w</span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.w <span class="op">-=</span> (alpha <span class="op">*</span> gradient) <span class="op">+</span> (beta <span class="op">*</span> (<span class="va">self</span>.w <span class="op">-</span> prevWeightVec))</span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>            prevWeightVec <span class="op">=</span> tempWeightVec</span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>        <span class="co">#appending the loss and score for the updated weight vector</span></span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.loss_history.append(<span class="va">self</span>.loss(X_,y))</span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.score_history.append(<span class="va">self</span>.score(X_,y))</span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>        <span class="co">#checking the conditions to terminate the loop - when overall improvement is minimum</span></span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> np.isclose(<span class="va">self</span>.loss_history[<span class="op">-</span><span class="dv">1</span>], <span class="va">self</span>.loss_history[<span class="op">-</span><span class="dv">2</span>]):</span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In addition to regular gradient descent, this blog post also implements and looks at the performance of a <b>Stochastic Gradient Descent</b>. Similar, to the regular gradient descent, we still run over the data a fixed number of times - <u>max_epochs</u>. However, in each iteration, instead of passing the complete feature matrix to the gradient function, we randomly pass a subset of certain size - <b>batch size</b> - to the gradient function. We then update the weight using the gradient of this <b>batch size</b> subset passed to the gradient function. We keep on doing this until we have made the updates for all set of points. Therefore, the weight vector <span class="math inline">\(w\)</span> gets updates multiple times in each <b>epoch</b> based on smaller subsets of the feature matrix and the related true labels. Furthermore, there is also a parameter called <i><u>momentum</u></i> in this implementation of the <b>Stochastic Gradient Function</b>, which controls the <span class="math inline">\(\beta\)</span> parameter. This is done</p>
 </section>
 <section id="evaluating-the-performance-of-all-three-algorithms" class="level1">
 <h1>Evaluating the Performance of All Three Algorithms</h1>
-<div class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>LR_G <span class="op">=</span> LogisticRegression()</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>LR_G.fit(X, y, alpha <span class="op">=</span> <span class="fl">.05</span>, max_epochs <span class="op">=</span> <span class="dv">3500</span>) </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>num_steps <span class="op">=</span> <span class="bu">len</span>(LR_G.loss_history)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>plt.plot(np.arange(num_steps) <span class="op">+</span> <span class="dv">1</span>, LR_G.loss_history, label <span class="op">=</span> <span class="st">"Regular Gradient Descent"</span>)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>LR_S <span class="op">=</span> LogisticRegression()</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>LR_S.fit_stochastic(X, y, alpha <span class="op">=</span> <span class="fl">.1</span>, max_epochs <span class="op">=</span> <span class="dv">3500</span>, batch_size <span class="op">=</span> <span class="dv">10</span>, momentum <span class="op">=</span> <span class="va">False</span>)</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>num_steps <span class="op">=</span> <span class="bu">len</span>(LR_S.loss_history)</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>plt.plot(np.arange(num_steps) <span class="op">+</span> <span class="dv">1</span>, LR_S.loss_history, label <span class="op">=</span> <span class="st">"Stochastic Gradient Descent"</span>)</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>LR_SM <span class="op">=</span> LogisticRegression()</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>LR_SM.fit_stochastic(X, y, alpha <span class="op">=</span> <span class="fl">.05</span>, max_epochs <span class="op">=</span> <span class="dv">3500</span>, batch_size <span class="op">=</span> <span class="dv">10</span>, momentum <span class="op">=</span> <span class="va">True</span>)</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>num_steps <span class="op">=</span> <span class="bu">len</span>(LR_SM.loss_history)</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>plt.plot(np.arange(num_steps) <span class="op">+</span> <span class="dv">1</span>, LR_SM.loss_history, label <span class="op">=</span> <span class="st">"Stochastic Gradient Descent (with Momentum)"</span>)</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>plt.loglog()</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>legend <span class="op">=</span> plt.legend() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Hypothesis:</p>
+<p>Stochastic Gradient Descent (with and without Momentum) will converge faster than Regular Gradient Descent. However, once it finds the optimum value - Regular Gradient Descent will “settle down”, while Stochastic Gradient Descent will “bounce around” a little.</p>
+<div class="cell" data-execution_count="51">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Regular Gradient Descent</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>LR_G <span class="op">=</span> LogisticRegression()</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>LR_G.fit(X, y, alpha <span class="op">=</span> <span class="fl">0.5</span>, max_epochs <span class="op">=</span> <span class="dv">1000</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>num_steps <span class="op">=</span> <span class="bu">len</span>(LR_G.loss_history)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>plt.plot(np.arange(num_steps) <span class="op">+</span> <span class="dv">1</span>, LR_G.loss_history, label <span class="op">=</span> <span class="st">"Regular Gradient Descent"</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#Stochastic Gradient Descent</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>LR_S <span class="op">=</span> LogisticRegression()</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>LR_S.fit_stochastic(X, y, alpha <span class="op">=</span> <span class="fl">0.5</span>, max_epochs <span class="op">=</span> <span class="dv">1000</span>, batch_size <span class="op">=</span> <span class="dv">10</span>, momentum <span class="op">=</span> <span class="va">False</span>) </span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>num_steps <span class="op">=</span> <span class="bu">len</span>(LR_S.loss_history)</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>plt.plot(np.arange(num_steps) <span class="op">+</span> <span class="dv">1</span>, LR_S.loss_history, label <span class="op">=</span> <span class="st">"Stochastic Gradient Descent"</span>)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co">#Stochastic Gradient Descent (with Momentum)</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>LR_SM <span class="op">=</span> LogisticRegression()</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>LR_SM.fit_stochastic(X, y, alpha <span class="op">=</span> <span class="fl">0.5</span>, max_epochs <span class="op">=</span> <span class="dv">1000</span>, batch_size <span class="op">=</span> <span class="dv">10</span>, momentum <span class="op">=</span> <span class="va">True</span>) </span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>num_steps <span class="op">=</span> <span class="bu">len</span>(LR_SM.loss_history)</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>plt.plot(np.arange(num_steps) <span class="op">+</span> <span class="dv">1</span>, LR_SM.loss_history, label <span class="op">=</span> <span class="st">"Stochastic Gradient Descent (with Momentum)"</span>)</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>plt.loglog()</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>legend <span class="op">=</span> plt.legend() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <p><img src="index_files/figure-html/cell-9-output-1.png" class="img-fluid"></p>
 </div>
 </div>
+<p>Our hypothesis is true, and we can see that the Stochastic Gradient Descent (with and without Momentum) converge faster to the minimizing solution, however they “bounce around” a little bit near the optimum solution. However, Regular Gradient Descent converges slower, but once it finds the optimum it “settles down”.</p>
+</section>
+<section id="effects-of-alpha---learning-rate---in-finding-a-minimum-solution" class="level1">
+<h1>Effects of <span class="math inline">\(\alpha\)</span> - Learning Rate - in Finding a Minimum Solution</h1>
+<p>In this section, we will evaluate the <b>Regular Gradient Descent function</b> - <i>fit</i> - in a 10 feature matrix, and look at how the learning rate - <span class="math inline">\(\alpha\)</span> - affects the convergence to a minimizer. More specifically, we want to see if a “very large” value of <span class="math inline">\(\alpha\)</span>, can prohibit us from ever converging to a minimum!</p>
 
 
 </section>

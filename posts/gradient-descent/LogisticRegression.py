@@ -3,74 +3,65 @@ import random
 from matplotlib import pyplot as plt
 
 class LogisticRegression:
-    def __init__(self, w = np.random.rand(3), loss_history = [], score_history = []):
-        self.w = w
-        
-        #creating a copy of the initial weight vector - for visualization purposes
-        self.initialW = w.copy()
-        
-        self.loss_history = loss_history
-        self.score_history = score_history
+    def __init__(self):
+        self.w = np.array([])
+        #storing the initial weight vector for visualization purposes
+        self.initialW = np.array([])
+        self.loss_history = []
+        self.score_history = []
         
     def fit(self, X, y, alpha, max_epochs):
         #creating modified feature matrix X_ with column of 1s
         X_ = np.append(X, np.ones((X.shape[0],1)), axis=1)
-        
-        #initializing the prev_loss as infinity  
-        prev_loss = np.inf
+        #initializing random weight vectors
+        self.w = np.random.rand(X_.shape[1])
+        self.initialW = self.w.copy() #solely for visualization purposes
+        #adding loss+score associated with initialized weight vector to respective vectors
+        self.loss_history.append(self.loss(X_,y))
+        self.score_history.append(self.score(X_,y))
+
         for i in range(max_epochs):
-            
-            #calculating the loss for the current weight vector
-            new_loss = self.loss(X_, y)
-            new_score = self.score(X_,y)
-            
             #updating the weight vector - the gradient descent update
             gradient = self.gradient_logistic_loss(X_, y)
             self.w -= alpha*gradient
-            
-            #appending the loss and score 
-            self.loss_history.append(new_loss)
-            self.score_history.append(new_score)
-            
+
+            #appending the loss and score for the updated weight vector
+            self.loss_history.append(self.loss(X_,y))
+            self.score_history.append(self.score(X_,y))
+
             #checking the conditions to terminate the loop - when overall improvement is minimum
-            if np.isclose(new_loss, prev_loss):
+            #comparing the latest added loss_history with the second_latest added loss_history
+            if np.isclose(self.loss_history[-1], self.loss_history[-2]):
                 break
-            else: 
-                prev_loss = new_loss
         
     def fit_stochastic(self, X, y, alpha, max_epochs, batch_size, momentum = False):
         #creating modified feature matrix X_ with column of 1s 
         X_ = np.append(X, np.ones((X.shape[0],1)), axis=1)
-        
+        #initializing random weight vectors
+        self.w = np.random.rand(X_.shape[1])
+        self.initialW = self.w.copy()
+        #adding loss+score associated with initialized weight vector to respective vectors
+        self.loss_history.append(self.loss(X_,y))
+        self.score_history.append(self.score(X_,y))
+
         #setting the beta value of momentum - based on momentum True or False
         beta = 0
         if(momentum):
             beta = 0.8
-        
-        #setting n as the number of rows - data points - in our feature matrix X_
-        n = X_.shape[0]
-        
+
         #creating a temporary variable which stores the previous weight vector - useful for implementing momentum
         prevWeightVec = 0
-        
-        #initializing previous loss as inf
-        prev_loss = np.inf
-        
+
+        #setting n as the number of rows - data points - in our feature matrix X_
+        n = X_.shape[0]
+
         #maximum number of time we are cycling through the data - max_epochs 
         #np.arange is similar to range used in above fit function
         for j in np.arange(max_epochs):
-            
-            #adding the score and loss history for the current weight vector
-            #this update cannot be included in the loop of the individual batches for consistency 
-            new_loss = self.loss(X_,y)
-            new_score = self.score(X_,y)
-            self.loss_history.append(new_loss)
-            self.score_history.append(new_score)
-            
-            #creating a list of 
+            #creating a list of all possible data points and shuffling
             order = np.arange(n)
             np.random.shuffle(order)
-            
+
             #this loop goes over the order - total number of rows (data points)
             #and then creates batches out of those orders, where n (total data points) // batch_size + 1
             for batch in np.array_split(order, n // batch_size + 1):
@@ -81,13 +72,15 @@ class LogisticRegression:
                 tempWeightVec = self.w
                 self.w -= (alpha * gradient) + (beta * (self.w - prevWeightVec))
                 prevWeightVec = tempWeightVec
-            
-             #checking the conditions to terminate the loop - when overall improvement is minimum
-            if np.isclose(new_loss, prev_loss):
+
+            #appending the loss and score for the updated weight vector
+            self.loss_history.append(self.loss(X_,y))
+            self.score_history.append(self.score(X_,y))
+
+            #checking the conditions to terminate the loop - when overall improvement is minimum
+            if np.isclose(self.loss_history[-1], self.loss_history[-2]):
                 break
-            else: 
-                prev_loss = new_loss
-    
+
     #defining related sigmoid function
     def sigmoid(self, z):
         return 1 / (1 + np.exp(-z))
@@ -114,13 +107,7 @@ class LogisticRegression:
     def predict(self, X):
         #returning labels of - {0s, 1s} - for our reference 
         yTemp = X@self.w
-        yPredVec = []
-        for i in range(len(yTemp)):
-            if(yTemp[i]>=0):
-                yPredVec.append(1)
-            else: 
-                yPredVec.append(0)
-        yPredVec = np.array(yPredVec)
+        yPredVec = 1 * (yTemp>=0)
         return yPredVec
     
     #returning accuracy for current weight 
