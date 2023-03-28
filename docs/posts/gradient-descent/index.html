@@ -535,7 +535,7 @@ Source - Philip Chodrow (Lecture Notes on Gradient Descent 02/22)
 <p><img src="index_files/figure-html/cell-13-output-1.png" class="img-fluid"></p>
 </div>
 </div>
-<div class="cell" data-execution_count="15">
+<div class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">#setting the first value of alpha</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>LR_third <span class="op">=</span> LogisticRegression()</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>LR_third.fit(X, y, alpha <span class="op">=</span> <span class="dv">45</span>, max_epochs <span class="op">=</span> <span class="dv">1000</span>)</span>
@@ -563,10 +563,83 @@ Source - Philip Chodrow (Lecture Notes on Gradient Descent 02/22)
 <p><img src="index_files/figure-html/cell-14-output-1.png" class="img-fluid"></p>
 </div>
 </div>
-<p>Therefore, we can clearly see - + explanation + -</p>
+<p>Therefore, we can clearly see that when we choose a very small <span class="math inline">\(\alpha\)</span> size = <span class="math inline">\(0.1\)</span>, the <b>Gradient Descent</b> converges, it just takes more time to converge. Then, if we choose a relatively small <span class="math inline">\(\alpha\)</span> size = <span class="math inline">\(5\)</span>, then the <b>Gradient Descent</b> converges a little faster. However, if choose a really large <span class="math inline">\(\alpha\)</span> size = <span class="math inline">\(45\)</span>, then <b>Gradient Descent</b> just keeps on oscilatting, and it never converges! # Choice of Batch Size in Stochastic Gradient Descent’s Convergence</p>
+<p>In this section, we will be looking at how the <i>batch size</i> in <b>Gradient Descent</b> affects how quickly the algorithm converges! For this experiment, we will be working with a feature matrix with <span class="math inline">\(10\)</span> features. Now, let us set up the data for experimentation!</p>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">#implementing the necessary packages</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> LogisticRegression <span class="im">import</span> LogisticRegression</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_blobs</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co"># logistic regression tends to involve a lot of log(0) and things that wash out in the end. </span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>np.seterr(<span class="bu">all</span><span class="op">=</span><span class="st">'ignore'</span>) </span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="co">#arbitrarily setting the seed number to 12345 to ensure reproducibility</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">12345</span>)</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="co">#setting the number of points we want</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">200</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="co">#setting the number of features</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a><span class="co">#using make_blobs function to create 2 clusters of 200 data points - centered   </span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a><span class="co">#randomly in 2 centers - since we are dealing with binary classification </span></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_blobs(n_samples <span class="op">=</span> n, n_features <span class="op">=</span> features, centers <span class="op">=</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, let us plot some graphs, which will allow us to understand the effect of <i>batch size</i> on convergence speed. We will be dealing with three cases, one where the batch size is really small, meaning that there will be a lot of batches in each <i>epoch</i>. Next, we would be dealing with a moderately sized batch size, meaning that there will be a medium number of batches in each <i>epoch</i>. And finally, for our extreme case, we will be looking at a very large batch size (equal to the number of data points), this would mean that there will only be <span class="math inline">\(1\)</span> batch, for each <i>epoch</i>, technically making the <b>Stochastic Gradient Descent</b> a <b>Regular Gradient Descent</b>, since all the points would be used up in the same batch, rather than dividing and updating.</p>
+<div class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>LR_smallSize <span class="op">=</span> LogisticRegression()</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>LR_smallSize.fit_stochastic(X, y, alpha <span class="op">=</span> <span class="fl">0.1</span>, max_epochs <span class="op">=</span> <span class="dv">1000</span>, batch_size <span class="op">=</span> <span class="dv">5</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>num_steps <span class="op">=</span> <span class="bu">len</span>(LR_smallSize.loss_history)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>plt.plot(np.arange(num_steps) <span class="op">+</span> <span class="dv">1</span>, LR_smallSize.loss_history, label <span class="op">=</span> <span class="st">"Batch Size = 5"</span>)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>LR_mediumSize <span class="op">=</span> LogisticRegression()</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>LR_mediumSize.fit_stochastic(X, y, alpha <span class="op">=</span> <span class="fl">0.1</span>, max_epochs <span class="op">=</span> <span class="dv">1000</span>, batch_size <span class="op">=</span> <span class="dv">15</span>)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>num_steps <span class="op">=</span> <span class="bu">len</span>(LR_mediumSize.loss_history)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>plt.plot(np.arange(num_steps) <span class="op">+</span> <span class="dv">1</span>, LR_mediumSize.loss_history, label <span class="op">=</span> <span class="st">"Batch Size = 15"</span>)</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>LR_mediumSizeTwo <span class="op">=</span> LogisticRegression()</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>LR_mediumSizeTwo.fit_stochastic(X, y, alpha <span class="op">=</span> <span class="fl">0.1</span>, max_epochs <span class="op">=</span> <span class="dv">1000</span>, batch_size <span class="op">=</span> <span class="dv">50</span>)</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>num_steps <span class="op">=</span> <span class="bu">len</span>(LR_mediumSizeTwo.loss_history)</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>plt.plot(np.arange(num_steps) <span class="op">+</span> <span class="dv">1</span>, LR_mediumSizeTwo.loss_history, label <span class="op">=</span> <span class="st">"Batch Size = 50"</span>)</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="co">#technically Regular Gradient Descent - since there would only be one batch </span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>LR_largeSize <span class="op">=</span> LogisticRegression()</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>LR_largeSize.fit_stochastic(X, y, alpha <span class="op">=</span> <span class="fl">0.1</span>, max_epochs <span class="op">=</span> <span class="dv">1000</span>, batch_size <span class="op">=</span> <span class="dv">200</span>)</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>num_steps <span class="op">=</span> <span class="bu">len</span>(LR_largeSize.loss_history)</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>plt.plot(np.arange(num_steps) <span class="op">+</span> <span class="dv">1</span>, LR_largeSize.loss_history, label <span class="op">=</span> <span class="st">"Batch Size = 200"</span>)</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>plt.loglog()</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>legend <span class="op">=</span> plt.legend()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Therefore, we can see that choosing a small batch size usually leads to faster convergence. In our last case, where <i>batch_size</i> = <span class="math inline">\(200\)</span>, that basically means that everything is in one batch - <b>Regular Gradient Descent</b>. However, upon further research I found out that choosing a very small <i>batch size</i> is not necessarily good, and a very small <i>batch size</i> might lead to introduction of randomness or “noise” in the update process. This can lead to slow convergence (contrary to what I mentioned above), and can increase computational cost.</p>
 </section>
-<section id="batch-sizes-effects" class="level1">
-<h1>Batch Size’s Effects</h1>
+<section id="introduction-of-momentum-and-its-effects-on-convergence-speed" class="level1">
+<h1>Introduction of Momentum and its Effects on Convergence Speed</h1>
+<p>In this section, we will be looking at the effects of “<i>momentum</i>” on the convergence speed of Stochastic Gradient descent. Now, let us look at the convergence speed of two implementations of the Stochastic Gradient Descent, one without the <i>momentum</i> parameter, and one with the <i>momentum</i> parameter!</p>
+<div class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>LR_noM <span class="op">=</span> LogisticRegression()</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>LR_noM.fit_stochastic(X, y, alpha <span class="op">=</span> <span class="fl">0.1</span>, max_epochs <span class="op">=</span> <span class="dv">1000</span>, batch_size <span class="op">=</span> <span class="dv">15</span>, momentum <span class="op">=</span> <span class="va">False</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>num_steps <span class="op">=</span> <span class="bu">len</span>(LR_noM.loss_history)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>plt.plot(np.arange(num_steps) <span class="op">+</span> <span class="dv">1</span>, LR_noM.loss_history, label <span class="op">=</span> <span class="st">"Stochastic Gradient (without Momentum)"</span>)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>LR_M <span class="op">=</span> LogisticRegression()</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>LR_M.fit_stochastic(X, y, alpha <span class="op">=</span> <span class="fl">0.1</span>, max_epochs <span class="op">=</span> <span class="dv">1000</span>, batch_size <span class="op">=</span> <span class="dv">15</span>, momentum <span class="op">=</span> <span class="va">True</span>)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>num_steps <span class="op">=</span> <span class="bu">len</span>(LR_M.loss_history)</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>plt.plot(np.arange(num_steps) <span class="op">+</span> <span class="dv">1</span>, LR_M.loss_history, label <span class="op">=</span> <span class="st">"Stochastic Gradient (with Momentum)"</span>)</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>plt.loglog()</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>legend <span class="op">=</span> plt.legend()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-17-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Therefore, we can see that the Stochastic Gradient (with Momentum) converged faster than Stochastic Gradient (without Momentum). However, upon further research I found out that it is important to set the momentum parameter right. Choosing a very high value for the <i>momentum</i> parameter might lead to overshooting the minimum and oscillate around it. At the same time, choosing a very small value for the <i>momentum</i> parameter might lead to the algorithm taking a lot of time to converge!</p>
 
 
 </section>
