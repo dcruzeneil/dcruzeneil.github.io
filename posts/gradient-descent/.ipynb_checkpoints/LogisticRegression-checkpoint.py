@@ -11,6 +11,19 @@ class LogisticRegression:
         self.score_history = []
         
     def fit(self, X, y, alpha, max_epochs):
+        '''
+        Performs Regular Gradient Descent on the weight vector "w", and finds a weight
+        vector which minimizes the emprical loss as defined by the logistic loss function.
+        
+        Parameters:
+            X (n x p - array): Collection of p features for n data points
+            y (array): True Labels - used for training the algorithm 
+            alpha (float): Learning Rate - influences how much the weights get changed in each iteration
+            max_epochs (int): maximum number of iterations
+        
+        Returns:
+            None - all changes are made in the weight vector w of the particular LogisticRegression object
+        '''
         #creating modified feature matrix X_ with column of 1s
         X_ = np.append(X, np.ones((X.shape[0],1)), axis=1)
         #initializing random weight vectors
@@ -35,6 +48,23 @@ class LogisticRegression:
                 break
         
     def fit_stochastic(self, X, y, alpha, max_epochs, batch_size, momentum = False):
+        '''
+        Performs Stochastic Gradient Descent on the weight vector "w", and finds a weight
+        vector which minimizes the emprical loss as defined by the logistic loss function.
+        Works by dividing the total number of data points into "batches" in each epoch.
+        Optional, momentum parameter is either 0.8 or 0 - based on True or False - influences Convergence Speed.
+        
+        Parameters:
+            X (n x p - array): Collection of p features for n data points
+            y (array): True Labels - used for training the algorithm 
+            alpha (float): Learning Rate - influences how much the weights get changed in each iteration
+            max_epochs (int): maximum number of iterations
+            batch_size (int): the size of each batch in each epoch - influences how many data points are used in the gradient update, in each iteration (epoch)
+            momentum (boolean): if True beta = 0.8 else beta = 0 - influences the performance of Stochastic Gradient Descent - particularly Convergence Speed
+        
+        Returns:
+            None - all changes are made in the weight vector w of the particular LogisticRegression object
+        '''
         #creating modified feature matrix X_ with column of 1s 
         X_ = np.append(X, np.ones((X.shape[0],1)), axis=1)
         #initializing random weight vectors
@@ -90,6 +120,7 @@ class LogisticRegression:
         return -y * np.log(self.sigmoid(y_hat)) - (1 - y)*np.log(1 - self.sigmoid(y_hat))
     
     #defining the gradient of the logistic loss function 
+    #Source - Philip Chodrow (Lecture Notes on Gradient Descent 02/22)
     def gradient_logistic_loss(self, X, y):
         #using the actual predictions - rather than 0s and 1s 
         #to utilize the potential of the logistic loss function
