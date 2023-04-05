@@ -125,7 +125,12 @@ class LogisticRegression:
         #using the actual predictions - rather than 0s and 1s 
         #to utilize the potential of the logistic loss function
         y_hat = X@self.w
-        return np.dot(self.sigmoid(y_hat) - y, X)/X.shape[0]
+        tempYDifference = self.sigmoid(y_hat) - y
+        output = np.zeros((X.shape[1],))
+        for i in range(X.shape[0]):
+            output+=np.dot(tempYDifference[i], X[i])
+        output = output/X.shape[0]
+        return output
 
     #defining the empirical risk - Overall Loss - L(w) - function 
     def loss(self, X, y):
