@@ -57,7 +57,7 @@ class LinearRegression:
     def predict(self, X):
         return X@self.w
     
-    def draw_line(self, X, subplot = None):
+    def draw_line(self, subplot = None):
         if(subplot is None):
             plt.plot(X, X@self.w, color = "black")
         else:
