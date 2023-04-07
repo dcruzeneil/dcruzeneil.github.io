@@ -58,7 +58,20 @@ class LinearRegression:
         return X@self.w
     
     def draw_line(self, subplot = None):
+        fake_x = np.linspace(0, 1, 101)
+        y_vals = fake_x*self.w[0] + self.w[1]
         if(subplot is None):
-            plt.plot(X, X@self.w, color = "black")
+            plt.plot(fake_x, y_vals, color="black")
         else:
-            subplot.plot(X, X@self.w, color = "black")
+            subplot.plot(fake_x, y_vals, color="black")   
+    
+    '''
+    def draw_line(self, subplot = None):
+        fake_x = np.linspace(0, 1, 101)[:,np.newaxis]
+        fake_x = np.append(fake_x, np.ones((fake_x.shape[0], 1)), 1)
+        y_vals = fake_x@self.w
+        if(subplot is None):
+            plt.plot(fake_x, y_vals, color="black")
+        else:
+            subplot.plot(fake_x, y_vals, color="black")
+    '''
