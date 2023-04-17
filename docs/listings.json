@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/mental-health-analysis/index.html",
       "/posts/linear-regression/index.html",
       "/posts/kernel-logistic-regression/index.html",
       "/posts/gradient-descent/index.html",
