@@ -151,9 +151,24 @@ background-size: cover;
 
 
 
-<p><a href="www.google.com">TheCodeGoesHere.py</a> # Introduction</p>
+<p><a href="www.google.com">An Implementation of Kernel Logistic Regression: <i>KernelLogisticRegression.py</i></a></p>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+In the <a href="https://dcruzeneil.github.io/posts/gradient-descent/">previous blog post</a>, we looked at Logistic Regression with Gradient Descent, which worked well for binary classification of data with linear decision boundaries. However, in this blog post we aim to:
+<ol>
+<li>
+Appreciate the limitations of that approach by working with data that does not have Linear Decision Boundaries
+</li><li>
+Implement <u><i>Kernel</i></u> Logistic Regression and use that for binary classification of data that does not have Linear Decision Boundaries
+</li></ol>
+Before we get started, let us get an understanding of what data with “non-linear decision boundaries” means. So far, we have been dealing with the “construction” of the best line which separates the data into one group or the other, however if you look at this data: <br><br>
+<center>
+<img src="nonlinear.png" width="450" height="400/">
+</center>
+<p><br>Visually, it is pretty apparent that the data follows a circular pattern, with the two “classes” having different radii (varying distance from the center). So it is pretty apparent that if we tried our implementation of Logistic Regression with Gradient Descent, it would not do well since by the inherent nature of this data - there are no linear decision boundaries.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
