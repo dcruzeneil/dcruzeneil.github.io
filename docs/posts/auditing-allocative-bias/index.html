@@ -225,7 +225,7 @@ In machine learning, <i>bias</i> refers to the production of consistently prejud
 <li>
 Creating a machine learning model that predicts an individual characteristic like: employment status or income, on the basis of other demographic characteristics
 </li><li>
-Performing a “<i>fairness audit</i>” in order to assess whether our algorithm displays bias with respect to demographic characteristics (race or sex)
+Performing a “fairness audit” in order to assess whether our algorithm displays bias with respect to demographic characteristics (race or sex)
 </li></ol>
 <p>For the purpose of this blog post, we will be using the <u>folktables</u> package to download data on which we will perform the <i>bias audit</i>. Here, we will be using the data of individuals from the state of Alabama.</p>
 </section>
@@ -235,14 +235,15 @@ Performing a “<i>fairness audit</i>” in order to assess whether our algorith
 <div class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> folktables <span class="im">import</span> ACSDataSource, ACSEmployment, BasicProblem, adult_filter</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split </span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.tree <span class="im">import</span> DecisionTreeClassifier</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>STATE <span class="op">=</span> <span class="st">'AL'</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>data_source <span class="op">=</span> ACSDataSource(survey_year<span class="op">=</span><span class="st">'2018'</span>, horizon<span class="op">=</span><span class="st">'1-Year'</span>, survey<span class="op">=</span><span class="st">'person'</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>acs_data <span class="op">=</span> data_source.get_data(states<span class="op">=</span>[STATE], download <span class="op">=</span> <span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.tree <span class="im">import</span> DecisionTreeClassifier</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>STATE <span class="op">=</span> <span class="st">'AL'</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>data_source <span class="op">=</span> ACSDataSource(survey_year<span class="op">=</span><span class="st">'2018'</span>, horizon<span class="op">=</span><span class="st">'1-Year'</span>, survey<span class="op">=</span><span class="st">'person'</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>acs_data <span class="op">=</span> data_source.get_data(states<span class="op">=</span>[STATE], download <span class="op">=</span> <span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now, let us examine the first few rows of the data, to get an idea of it:</p>
 <div class="cell" data-execution_count="2">
@@ -405,7 +406,7 @@ Performing a “<i>fairness audit</i>” in order to assess whether our algorith
 </div>
 </div>
 </div>
-<p>Each row in the above dataset corresponds to an individual citizen of Alabama who filled out the PUMS survey of 2018. Therefore, what we have is a <span class="math inline">\(n\)</span>x<span class="math inline">\(p\)</span> matrix, where <span class="math inline">\(n\)</span> = number of data points, and <span class="math inline">\(p\)</span> = number of features. We can see that there are a bunch of features in this dataset, and all of them might not be pertinent for our analysis. Therefore, we are only going to choose the features which are relevant for this blog post.</p>
+<p>Each row in the above dataset corresponds to an individual citizen of Alabama who filled out the PUMS survey of 2018. Therefore, what we have is a <span class="math inline">\(n\)</span>x<span class="math inline">\(p\)</span> matrix, where <span class="math inline">\(n\)</span> = number of data points, and <span class="math inline">\(p\)</span> = number of features. We can see that there are a bunch of features in this dataset, and all of them might not be pertinent for our analysis. Therefore, we are only going to choose the features which are relevant for this blog post:</p>
 <div class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>possible_features<span class="op">=</span>[<span class="st">'AGEP'</span>, <span class="st">'SCHL'</span>, <span class="st">'MAR'</span>, <span class="st">'RELP'</span>, <span class="st">'DIS'</span>, <span class="st">'ESP'</span>, <span class="st">'CIT'</span>, <span class="st">'MIG'</span>, <span class="st">'MIL'</span>, <span class="st">'ANC'</span>, <span class="st">'NATIVITY'</span>, <span class="st">'DEAR'</span>, <span class="st">'DEYE'</span>, <span class="st">'DREM'</span>, <span class="st">'SEX'</span>, <span class="st">'RAC1P'</span>, <span class="st">'ESR'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -444,6 +445,115 @@ Group (RAC1P): the group by which we wish to audit the bias
 </section>
 <section id="basic-descriptives" class="level1">
 <h1>Basic Descriptives</h1>
+<p>Now, that we have our data set up, we can address some basic descriptives of the data which will aid us in our analysis later on. For this it is useful to make a <i>data frame</i> out of our data:</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(X_train, columns <span class="op">=</span> features_to_use)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"group"</span>] <span class="op">=</span> group_train</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"label"</span>] <span class="op">=</span> y_train</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Question 1: How many individuals are in the data?</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Answer 1: There are </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> people in the training data set!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Answer 1: There are 38221 people in the training data set!</code></pre>
+</div>
+</div>
+<p>Question 2: Of these individuals, what proportion have target label equal to 1? In employment prediction, these would correspond to employed individuals.</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>employed <span class="op">=</span> df[df[<span class="st">'label'</span>]<span class="op">==</span><span class="va">True</span>]</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Answer 2: There are </span><span class="sc">{</span>employed<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> number of people in the training data set who are employed - have target label equal to True!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Answer 2: There are 15638 number of people in the training data set who are employed - have target label equal to True!</code></pre>
+</div>
+</div>
+<p>Question 3: Of these individuals, how many are in each of the groups? <br><br>Answer 3: We can see a breakdown of how many people of each racial group are employed:</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(employed.groupby(<span class="st">'group'</span>).size())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>group
+1    12020
+2     2976
+3       68
+4        1
+5        6
+6      226
+7        3
+8      147
+9      191
+dtype: int64</code></pre>
+</div>
+</div>
+<p>Question 4: In each group, what proportion of individuals have target label equal to 1? <br><br>Answer 4: The proportion of individuals in each group who are employed (have target label 1):</p>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.groupby([<span class="st">'group'</span>])[[<span class="st">'label'</span>]].aggregate([np.mean]).<span class="bu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      label
+       mean
+group      
+1      0.42
+2      0.37
+3      0.44
+4      1.00
+5      0.21
+6      0.50
+7      0.27
+8      0.37
+9      0.29</code></pre>
+</div>
+</div>
+<p>Question 5: Check for intersectional trends by studying the proportion of positive target labels broken out by your chosen group labels and an additional group label. For example, if you chose race (RAC1P) as your group, then you could also choose sex (SEX) and compute the proportion of positive labels by both race and sex. <br><br> Answer 5: For answering this question, first let us look at the positive labels broken down only by SEX. Then we can look at the intersectionality of RACE and SEX, by looking at positive labels broken down by these two group labels.</p>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.groupby([<span class="st">'SEX'</span>])[[<span class="st">'label'</span>]].aggregate([np.mean]).<span class="bu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    label
+     mean
+SEX      
+1.0  0.45
+2.0  0.37</code></pre>
+</div>
+</div>
+<p>We can see that: 45% of MEN (1.0) are employed, while 37% of WOMEN (2.0) are employed! Now let us look at the positive target labels broken down by both RACE and SEX:</p>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.groupby([<span class="st">'group'</span>,<span class="st">'SEX'</span>])[[<span class="st">'label'</span>]].aggregate([np.mean]).<span class="bu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          label
+           mean
+group SEX      
+1     1.0  0.47
+      2.0  0.38
+2     1.0  0.36
+      2.0  0.38
+3     1.0  0.48
+      2.0  0.39
+4     1.0  1.00
+5     1.0  0.23
+      2.0  0.19
+6     1.0  0.62
+      2.0  0.41
+7     1.0  0.50
+      2.0  0.14
+8     1.0  0.46
+      2.0  0.28
+9     1.0  0.32
+      2.0  0.25</code></pre>
+</div>
+</div>
+<p>We can visualize this data using a bar chart for easier understanding:</p>
+<div class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Hello"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Hello</code></pre>
+</div>
+</div>
+</section>
+<section id="training-the-model" class="level1">
+<h1>Training the Model</h1>
+</section>
+<section id="auditing-the-model" class="level1">
+<h1>Auditing the Model</h1>
+</section>
+<section id="concluding-discussions" class="level1">
+<h1>Concluding Discussions</h1>
 
 
 </section>
