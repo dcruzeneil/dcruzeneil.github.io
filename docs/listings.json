@@ -3,7 +3,10 @@
     "listing": "/index.html",
     "items": [
       "/posts/mental-health-analysis/index.html",
+      "/posts/deep-music/index.html",
       "/posts/timnit-gebru/index.html",
+      "/posts/optimization-adam/index.html",
+      "/posts/unsupervised-learning/index.html",
       "/posts/auditing-allocative-bias/index.html",
       "/posts/linear-regression/index.html",
       "/posts/kernel-logistic-regression/index.html",
