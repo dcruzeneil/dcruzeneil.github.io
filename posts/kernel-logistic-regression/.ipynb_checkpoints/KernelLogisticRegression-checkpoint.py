@@ -12,7 +12,6 @@ class KernelLogisticRegression:
         #computing the kernel matrix - which is an NxN matrix 
         km = self.kernel(X, X, **self.kernel_kwargs)
         #initializing random weight vector - v0
-        #v0 = np.random.rand(X_.shape[0])
         v0 = np.random.rand(X.shape[0])
         #minimize the self.loss function return value by adjusting the v paramater
         #for starters: take the v parameter as v0

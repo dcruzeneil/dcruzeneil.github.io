@@ -305,7 +305,7 @@ Originally, when we were dealing with Logistic Regression, our empirical risk mi
 <center>
 <span class="math inline">\(\boldsymbol{\kappa}(\mathbf{x}_i) = \left( \begin{matrix}  k(\mathbf{x}_1, \mathbf{x}_i) \\  k(\mathbf{x}_2, \mathbf{x}_i) \\  \vdots \\  k(\mathbf{x}_n, \mathbf{x}_i) \end{matrix}\right)\;\)</span>
 </center>
-<br>Here, <span class="math inline">\(k(\mathbf{x}_1, \mathbf{x}_i)\)</span> performs the kernel operation between two feature rows, and produces a single-value which for simplicity can be understood as the “similarity” between these two feature rows. Performing this operation on every feature row of the original feature matrix, with respect to every other feature row of the original feature matrix gives us the <u>kernel matrix</u><br>:
+<br>Here, <span class="math inline">\(k(\mathbf{x}_1, \mathbf{x}_i)\)</span> performs the kernel operation between two feature rows, and produces a single-value which for simplicity can be understood as the “similarity” between these two feature rows. Performing this operation on every feature row of the original feature matrix, with respect to every other feature row of the original feature matrix gives us the <u>kernel matrix</u>:<br><br>
 <center>
 <span class="math inline">\(\boldsymbol{\kappa}(\mathbf{X}) = \left( \begin{matrix}  k(\mathbf{x}_1, \mathbf{x}_1) \hspace{1cm} k(\mathbf{x}_1, \mathbf{x}_2) \hspace{1cm} k(\mathbf{x}_1, \mathbf{x}_3) \hspace{1cm} k(\mathbf{x}_1, \mathbf{x}_n) \\  k(\mathbf{x}_2, \mathbf{x}_1) \hspace{1cm} k(\mathbf{x}_2, \mathbf{x}_2) \hspace{1cm} k(\mathbf{x}_2, \mathbf{x}_3) \hspace{1cm} k(\mathbf{x}_2, \mathbf{x}_n)\\  \vdots \\  k(\mathbf{x}_n, \mathbf{x}_1) \hspace{1cm} k(\mathbf{x}_n, \mathbf{x}_2) \hspace{1cm} k(\mathbf{x}_n, \mathbf{x}_3) \hspace{1cm} k(\mathbf{x}_n, \mathbf{x}_n)) \end{matrix}\right)\;\)</span>
 </center>
@@ -317,6 +317,112 @@ Originally, when we were dealing with Logistic Regression, our empirical risk mi
 </section>
 <section id="implementation-and-explanation-of-code" class="level1">
 <h1>Implementation and Explanation of Code</h1>
+<p>For my implementation of Kernel Logistic Regression, these are some of the important functions:</p>
+<p><b>1. <u>fit</u> function:</b></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fit(<span class="va">self</span>, X, y):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.X_train <span class="op">=</span> X </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">#computing the kernel matrix - which is an NxN matrix </span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    km <span class="op">=</span> <span class="va">self</span>.kernel(X, X, <span class="op">**</span><span class="va">self</span>.kernel_kwargs)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">#initializing random weight vector - v0</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    v0 <span class="op">=</span> np.random.rand(X.shape[<span class="dv">0</span>])</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">#minimize the self.loss function return value by adjusting the v paramater</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">#for starters: take the v parameter as v0</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> minimize(<span class="kw">lambda</span> v: <span class="va">self</span>.loss(km, y, v), x0 <span class="op">=</span> v0)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.v <span class="op">=</span> result.x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We first take the original matrix, and save an instance of it for future use - when we perform <i>predict</i> on unseen data. We then calculate the kernel matrix of the original feature matrix with respect to itself. Now, we can go ahead and initialize a random weight vector <span class="math inline">\(v \in \mathbb{R}^{n}\)</span>. To find the optimal weight vector, we use the <i>minimize</i> function from <i>scipy.optimize</i>. Here, we pass our loss function - which utilizes logistic loss. <br><br><b>2. <u>predict</u> function:</b></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> predict(<span class="va">self</span>, X):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    km <span class="op">=</span> <span class="va">self</span>.kernel(<span class="va">self</span>.X_train, X, <span class="op">**</span><span class="va">self</span>.kernel_kwargs)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    km_transpose <span class="op">=</span> km.T</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">1</span><span class="op">*</span>((km_transpose<span class="op">@</span>self.v)<span class="op">&gt;</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+The idea behind Kernel Logistic Regression, when making predictions for unseen data (validation data) is as follows:
+<ol>
+<li>
+For Feature Transformation - creata a Kernel Matrix using the original feature matrix and the new (unseen) feature matrix
+</li><li>
+For Predictions - use the optimal weight vector <span class="math inline">\(v\)</span> to make predictions on this Kernel Matrix
+</li></ol>
+<p>Therefore, we first create a kernel matrix from our saved instance of the original feature matrix and the unseen feature matrix. Now, the step where we have to transpose the matrix could have been avoided if we switched the order in which we pass the parameters to the <i>kernel</i> function. However, for this code - the original training feature matrix is <span class="math inline">\(X_\text{training} \in \mathbb{R}^{nxp}\)</span> and the unseen feature matrix is say <span class="math inline">\(X_\text{unseen} \in \mathbb{R}^{mxp}\)</span>. Therefore, in the order in which we have passed the parameters, the kernel matrix will be of the order <span class="math inline">\(\mathbb{nxm}\)</span> - <span class="math inline">\(n\)</span> rows and <span class="math inline">\(m\)</span> columns. Since, the multiplication of the (kernel) matrix and the weight vector <span class="math inline">\(v\)</span> happens along the row, and since in this case our kernel matrix is not symmetrical, we transpose the matrix to make it of the order <span class="math inline">\(\mathbb{R}^{mxn}\)</span> - <span class="math inline">\(m\)</span> rows and <span class="math inline">\(n\)</span> columns. Now, our weight vector <span class="math inline">\(v \in \mathbb{R}^n\)</span> can be multiplied along the row, and we will get <span class="math inline">\(m\)</span> predictions - the number of data points in the unseen feature matrix. <br><br><b>3. <u>RBF Kernel</u> and <u>Gamma</u>:</b> When creating an object of our KernelLogisticRegression class, we did:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>KLR <span class="op">=</span> KernelLogisticRegression(rbf_kernel, gamma <span class="op">=</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>
+rbf_kernel: the type of kernel function which is used while calculating the kernel matrix<br>
+
+</li><li>
+gamma: the ‘gamma’ parameter controls how the model measures the “similarity” between two things. In simpler words, the gamma parameter basically controls how “curvy” and “squiggly” our lines are. A very small gamma value might lead to underfitting, while a very large gamma value might lead to overfitting
+</li></ul>
+</section>
+<section id="the-effect-of-gamma" class="level1">
+<h1>The Effect of Gamma</h1>
+In this section, we want to illustrate the effect that the value of gamma has on the training data and the testing data. Generally, speaking:
+<ul>
+<li>
+<u>Good Value of Gamma</u>: good score on the training data + does not overfit + is able to generaliez on unseen data
+</li><li>
+<u>Very Large Value of Gamma</u>: extremely high score on the training data + overfits + fails to generalize on unseen data
+</li></ul>
+<section id="good-value-of-gamma" class="level4">
+<h4 class="anchored" data-anchor-id="good-value-of-gamma">Good Value of Gamma</h4>
+<p>First generating and fitting our model on the training data:</p>
+<div class="cell" data-execution_count="38">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#training data</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_moons(<span class="dv">200</span>, shuffle <span class="op">=</span> <span class="va">True</span>, noise <span class="op">=</span> <span class="fl">0.2</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>KLR <span class="op">=</span> KernelLogisticRegression(rbf_kernel, gamma <span class="op">=</span> <span class="dv">10</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>KLR.fit(X, y)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>plot_decision_regions(X, y, clf <span class="op">=</span> KLR)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> title <span class="op">=</span> plt.gca().<span class="bu">set</span>(title <span class="op">=</span> <span class="ss">f"Accuracy = </span><span class="sc">{</span>KLR<span class="sc">.</span>score(X, y)<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                      xlabel <span class="op">=</span> <span class="st">"Feature 1"</span>, </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                      ylabel <span class="op">=</span> <span class="st">"Feature 2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-5-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Now generating unseen data with similar pattern, and assessing our model’s performance on this unseen data:</p>
+<div class="cell" data-execution_count="39">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#unseen data with similar pattern </span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_moons(<span class="dv">200</span>, shuffle <span class="op">=</span> <span class="va">True</span>, noise <span class="op">=</span> <span class="fl">0.2</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>plot_decision_regions(X, y, clf <span class="op">=</span> KLR)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> title <span class="op">=</span> plt.gca().<span class="bu">set</span>(title <span class="op">=</span> <span class="ss">f"Accuracy = </span><span class="sc">{</span>KLR<span class="sc">.</span>score(X, y)<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                      xlabel <span class="op">=</span> <span class="st">"Feature 1"</span>, </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                      ylabel <span class="op">=</span> <span class="st">"Feature 2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-6-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>The model performs fairly well on the unseen data. Therefore, we can conclude that a good value of gamma allows for effective learning and generalization on unseen data. Therefore, we do not run into the risk of overfitting.</p>
+</section>
+<section id="very-large-value-of-gamma" class="level4">
+<h4 class="anchored" data-anchor-id="very-large-value-of-gamma">Very Large Value of Gamma</h4>
+<p>First, generating some training data and fitting our model on this training data:</p>
+<div class="cell" data-execution_count="42">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#training data</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_moons(<span class="dv">200</span>, shuffle <span class="op">=</span> <span class="va">True</span>, noise <span class="op">=</span> <span class="fl">0.2</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>KLR <span class="op">=</span> KernelLogisticRegression(rbf_kernel, gamma <span class="op">=</span> <span class="dv">1000000</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>KLR.fit(X, y)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>plot_decision_regions(X, y, clf <span class="op">=</span> KLR)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> title <span class="op">=</span> plt.gca().<span class="bu">set</span>(title <span class="op">=</span> <span class="ss">f"Accuracy = </span><span class="sc">{</span>KLR<span class="sc">.</span>score(X, y)<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>                      xlabel <span class="op">=</span> <span class="st">"Feature 1"</span>, </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>                      ylabel <span class="op">=</span> <span class="st">"Feature 2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-7-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Now generating unseen data with similar pattern, and assessing our model’s performance on this unseen data:</p>
+<div class="cell" data-execution_count="43">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#unseen data with similar pattern </span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_moons(<span class="dv">200</span>, shuffle <span class="op">=</span> <span class="va">True</span>, noise <span class="op">=</span> <span class="fl">0.2</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>plot_decision_regions(X, y, clf <span class="op">=</span> KLR)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> title <span class="op">=</span> plt.gca().<span class="bu">set</span>(title <span class="op">=</span> <span class="ss">f"Accuracy = </span><span class="sc">{</span>KLR<span class="sc">.</span>score(X, y)<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                      xlabel <span class="op">=</span> <span class="st">"Feature 1"</span>, </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                      ylabel <span class="op">=</span> <span class="st">"Feature 2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-8-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Although, a dramatic example it goes on to show us that choosing a very large value of gamma leads to immense overfitting. The decision boundaries become a bunch of “squiggly” lines and the model learns the noise on the training data. Therefore, the model achieves perfect score on the training data. However, when we evaluate this model’s performance on unseen data, it fails to generalize and achieves a really low score on this unseen data.</p>
+</section>
+</section>
+<section id="finding-the-best-value-of-gamma" class="level1">
+<h1>Finding the Best Value of Gamma</h1>
 
 
 </section>
