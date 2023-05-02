@@ -215,7 +215,7 @@ background-size: cover;
 
 
 
-<p><a href="www.google.com"><b>An Implementation of Kernel Logistic Regression: <i>KernelLogisticRegression.py</i></b></a></p>
+<p><a href="https://github.com/dcruzeneil/dcruzeneil.github.io/blob/main/posts/kernel-logistic-regression/KernelLogisticRegression.py"><b>An Implementation of Kernel Logistic Regression: <i>KernelLogisticRegression.py</i></b></a></p>
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
 In the <a href="https://dcruzeneil.github.io/posts/gradient-descent/">previous blog post</a>, we looked at Logistic Regression with Gradient Descent, which worked well for binary classification of data with linear decision boundaries. However, in this blog post we aim to:
@@ -234,7 +234,7 @@ Before we get started, let us get an understanding of what data with “non-line
 <section id="logistic-regression-versus-kernel-logistic-regression-on-data-with-non-linear-decision-boundaries" class="level1">
 <h1>Logistic Regression versus Kernel Logistic Regression on Data with Non-Linear Decision Boundaries</h1>
 <p>In this section, we aim to understand the performance difference of <i>Logistic Regression</i> and <i>Kernel Logistic Regression</i> by generating some data which has clear non-linear decision boundaries. For the <i>Kernel Logistic Regression</i> we will be using the code that I wrote, however for the <i>Logistic Regression</i> we will be using scikit-learn’s model. Let us go ahead and generate some synthetic data:</p>
-<div class="cell" data-execution_count="24">
+<div class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> KernelLogisticRegression <span class="im">import</span> KernelLogisticRegression</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics.pairwise <span class="im">import</span> rbf_kernel</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_moons, make_circles</span>
@@ -242,19 +242,20 @@ Before we get started, let us get an understanding of what data with “non-line
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mlxtend.plotting <span class="im">import</span> plot_decision_regions</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>np.seterr(<span class="bu">all</span><span class="op">=</span><span class="st">"ignore"</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_moons(<span class="dv">200</span>, shuffle <span class="op">=</span> <span class="va">True</span>, noise <span class="op">=</span> <span class="fl">0.2</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#visualizing the data</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[:,<span class="dv">0</span>], X[:,<span class="dv">1</span>], c <span class="op">=</span> y)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> plt.gca().<span class="bu">set</span>(xlabel <span class="op">=</span> <span class="st">"Feature 1"</span>, ylabel <span class="op">=</span> <span class="st">"Feature 2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>np.seterr(<span class="bu">all</span><span class="op">=</span><span class="st">"ignore"</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_moons(<span class="dv">200</span>, shuffle <span class="op">=</span> <span class="va">True</span>, noise <span class="op">=</span> <span class="fl">0.2</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#visualizing the data</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[:,<span class="dv">0</span>], X[:,<span class="dv">1</span>], c <span class="op">=</span> y)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> plt.gca().<span class="bu">set</span>(xlabel <span class="op">=</span> <span class="st">"Feature 1"</span>, ylabel <span class="op">=</span> <span class="st">"Feature 2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <p><img src="index_files/figure-html/cell-2-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Clearly, the data above has non-linear decision boundaries and follows a “moon” like shape. Now, let us go ahead and fit our version of <i>Kernel Logistic Regression</i> and scikit-learn’s <i>Logistic Regression</i> on the data:</p>
-<div class="cell" data-execution_count="26">
+<div class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Regular logistic Regression </span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>LR <span class="op">=</span> LogisticRegression()</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>LR.fit(X, y)</span>
@@ -264,7 +265,7 @@ Before we get started, let us get an understanding of what data with “non-line
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>KLR.fit(X, y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now, we can go ahead and visualize how our two models performed:</p>
-<div class="cell" data-execution_count="37">
+<div class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">"figure.figsize"</span>] <span class="op">=</span> (<span class="dv">15</span>, <span class="dv">5</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -363,7 +364,7 @@ In this section, we want to illustrate the effect that the value of gamma has on
 <section id="good-value-of-gamma" class="level4">
 <h4 class="anchored" data-anchor-id="good-value-of-gamma">Good Value of Gamma</h4>
 <p>First generating and fitting our model on the training data:</p>
-<div class="cell" data-execution_count="38">
+<div class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#training data</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_moons(<span class="dv">200</span>, shuffle <span class="op">=</span> <span class="va">True</span>, noise <span class="op">=</span> <span class="fl">0.2</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>KLR <span class="op">=</span> KernelLogisticRegression(rbf_kernel, gamma <span class="op">=</span> <span class="dv">10</span>)</span>
@@ -377,7 +378,7 @@ In this section, we want to illustrate the effect that the value of gamma has on
 </div>
 </div>
 <p>Now generating unseen data with similar pattern, and assessing our model’s performance on this unseen data:</p>
-<div class="cell" data-execution_count="39">
+<div class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#unseen data with similar pattern </span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_moons(<span class="dv">200</span>, shuffle <span class="op">=</span> <span class="va">True</span>, noise <span class="op">=</span> <span class="fl">0.2</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>plot_decision_regions(X, y, clf <span class="op">=</span> KLR)</span>
@@ -393,7 +394,7 @@ In this section, we want to illustrate the effect that the value of gamma has on
 <section id="very-large-value-of-gamma" class="level4">
 <h4 class="anchored" data-anchor-id="very-large-value-of-gamma">Very Large Value of Gamma</h4>
 <p>First, generating some training data and fitting our model on this training data:</p>
-<div class="cell" data-execution_count="42">
+<div class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#training data</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_moons(<span class="dv">200</span>, shuffle <span class="op">=</span> <span class="va">True</span>, noise <span class="op">=</span> <span class="fl">0.2</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>KLR <span class="op">=</span> KernelLogisticRegression(rbf_kernel, gamma <span class="op">=</span> <span class="dv">1000000</span>)</span>
@@ -407,7 +408,7 @@ In this section, we want to illustrate the effect that the value of gamma has on
 </div>
 </div>
 <p>Now generating unseen data with similar pattern, and assessing our model’s performance on this unseen data:</p>
-<div class="cell" data-execution_count="43">
+<div class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#unseen data with similar pattern </span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_moons(<span class="dv">200</span>, shuffle <span class="op">=</span> <span class="va">True</span>, noise <span class="op">=</span> <span class="fl">0.2</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>plot_decision_regions(X, y, clf <span class="op">=</span> KLR)</span>
@@ -423,6 +424,108 @@ In this section, we want to illustrate the effect that the value of gamma has on
 </section>
 <section id="finding-the-best-value-of-gamma" class="level1">
 <h1>Finding the Best Value of Gamma</h1>
+<p>Now, let us perform an experiment in which we will find the best value of gamma. To do this, we will evaluate the score of our Kernel Logistic Regression model (with varying values of gamma) on both the training data, and the testing data and look at the results. Since, we are also going to be performing this experiment with varying levels of <i>noise</i> and for different shapes of data, it is useful to construct a function that can easily be called:</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>np.random.seed()</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> performExperiment(dataShape, noise <span class="op">=</span> <span class="fl">0.2</span>, gamma <span class="op">=</span> [<span class="op">-</span><span class="dv">5</span>, <span class="dv">6</span>]):</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    gammaVal <span class="op">=</span> <span class="fl">10.0</span><span class="op">**</span>np.arange(gamma[<span class="dv">0</span>], gamma[<span class="dv">1</span>])</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.DataFrame({<span class="st">"gamma"</span>: [], <span class="st">"train"</span> : [], <span class="st">"test"</span> : []})</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">#finding accuracy over 10 runs</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> rep <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        X_train, y_train <span class="op">=</span> dataShape(<span class="dv">100</span>, shuffle <span class="op">=</span> <span class="va">True</span>, noise <span class="op">=</span> noise)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        X_test, y_test <span class="op">=</span> dataShape(<span class="dv">100</span>, shuffle <span class="op">=</span> <span class="va">True</span>, noise <span class="op">=</span> noise)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> gamma <span class="kw">in</span> gammaVal:</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>            KLR <span class="op">=</span> KernelLogisticRegression(rbf_kernel, gamma <span class="op">=</span> gamma)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>            KLR.fit(X_train, y_train)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>            to_add <span class="op">=</span> pd.DataFrame({<span class="st">"gamma"</span> : [gamma],</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>                                   <span class="st">"train"</span> : [KLR.score(X_train, y_train)],</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>                                   <span class="st">"test"</span> : [KLR.score(X_test, y_test)]})</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>            df <span class="op">=</span> pd.concat((df, to_add))</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    means <span class="op">=</span> df.groupby(<span class="st">"gamma"</span>).mean().reset_index()</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    plt.plot(means[<span class="st">"gamma"</span>], means[<span class="st">"train"</span>], label <span class="op">=</span> <span class="st">"training"</span>)</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    plt.plot(means[<span class="st">"gamma"</span>], means[<span class="st">"test"</span>], label <span class="op">=</span> <span class="st">"testing"</span>)</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    plt.loglog()</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    plt.legend()</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    labs <span class="op">=</span> plt.gca().<span class="bu">set</span>(xlabel <span class="op">=</span> <span class="st">"Value of Gamma"</span>, ylabel <span class="op">=</span> <span class="st">"Accuracy (mean over 10 runs)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, that we have this function that we can call, let us see which value of gamma works best for the moon shape:</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>performExperiment(make_moons)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-10-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>We can clearly see that an extremely small value of gamma is no good. We can see that the accuracy starts to pick up around <i>gamma</i> = <span class="math inline">\(10^{-1}\)</span>. So, for better visualization, we can change our gamma value:</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>performExperiment(make_moons, gamma <span class="op">=</span> [<span class="op">-</span><span class="dv">1</span>, <span class="dv">6</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-11-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Much better! From this graph, it seems like the value of gamma that performs the best on the testing data is around <i>gamma</i> = <span class="math inline">\(10^{2} = 100\)</span>.</p>
+<section id="noise-and-the-best-value-of-gamma" class="level4">
+<h4 class="anchored" data-anchor-id="noise-and-the-best-value-of-gamma">“Noise” and the Best Value of Gamma</h4>
+<p>Now, we can experiment with differing noise levels and see the effect that has on the “best” value of gamma. Noise determines how much variability will be in our data, for example in the case of crescents: 0 noise would imply perfect, completely separable crescent shapes made by the two types of data, and 1 noise would imply a lot more overlap.</p>
+<p>First for a lower level of noise than the previous experiment:</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>performExperiment(make_moons, noise <span class="op">=</span> <span class="fl">0.1</span>, gamma <span class="op">=</span> [<span class="op">-</span><span class="dv">1</span>, <span class="dv">6</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-12-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Next with a higher level of noise than the previous experiment:</p>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>performExperiment(make_moons, noise <span class="op">=</span> <span class="fl">0.6</span>, gamma <span class="op">=</span> [<span class="op">-</span><span class="dv">1</span>, <span class="dv">6</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-13-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Therefore, we can see that in both cases (although it is more apparent with the experiment with the higher noise), the best value of <i>gamma</i> is still around <span class="math inline">\(100\)</span>! Therefore, we can conclude that the best value of <i>gamma</i> does not depend strongly on the noise of the data. However, there are many other considerations that we have to be wary of. We must note that in different noise levels, the best <i>gamma</i> value, although the same, yields different accuracies. This is because data with lower noise is more easily separable, while data with higher noise is harder to separate!</p>
+</section>
+</section>
+<section id="different-geometries" class="level1">
+<h1>Different Geometries</h1>
+<p>We can use the <i>make_circles</i> function generate concentric circles, instead of crescents. First, let us visualize what varying levels of “noise” look like in the context of the <i>make_circles</i> function.</p>
+<p>Starting off with an extremely low level of noise:</p>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_circles(<span class="dv">200</span>, shuffle <span class="op">=</span> <span class="va">True</span>, noise <span class="op">=</span> <span class="fl">0.01</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>KLR <span class="op">=</span> KernelLogisticRegression(rbf_kernel, gamma <span class="op">=</span> <span class="dv">10</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>KLR.fit(X, y)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>plot_decision_regions(X, y, clf <span class="op">=</span> KLR)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>title <span class="op">=</span> plt.gca().<span class="bu">set</span>(title <span class="op">=</span> <span class="ss">f"Accuracy = </span><span class="sc">{</span>KLR<span class="sc">.</span>score(X, y)<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>                      xlabel <span class="op">=</span> <span class="st">"Feature 1"</span>, </span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>                      ylabel <span class="op">=</span> <span class="st">"Feature 2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-14-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Next, looking at a relatively high level of noise:</p>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_circles(<span class="dv">200</span>, shuffle <span class="op">=</span> <span class="va">True</span>, noise <span class="op">=</span> <span class="fl">0.4</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>KLR <span class="op">=</span> KernelLogisticRegression(rbf_kernel, gamma <span class="op">=</span> <span class="dv">10</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>KLR.fit(X, y)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>plot_decision_regions(X, y, clf <span class="op">=</span> KLR)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>title <span class="op">=</span> plt.gca().<span class="bu">set</span>(title <span class="op">=</span> <span class="ss">f"Accuracy = </span><span class="sc">{</span>KLR<span class="sc">.</span>score(X, y)<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>                      xlabel <span class="op">=</span> <span class="st">"Feature 1"</span>, </span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>                      ylabel <span class="op">=</span> <span class="st">"Feature 2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-15-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Therefore, we can clearly see the data with the higher noise has way more variability in where the points fall. Because of this, the Kernel Logistic Regression model performs way better on data with low noise, as compared to data with higher noise. Now, in order to find the best value of <i>gamma</i> for this data, we can repeat the previous experiment but now with circles:</p>
+<div class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>performExperiment(make_circles, gamma <span class="op">=</span> [<span class="op">-</span><span class="dv">1</span>, <span class="dv">6</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Seems, like <i>gamma</i>=<span class="math inline">\(10^{0} = 1\)</span> performs the best on our testing data!</p>
 
 
 </section>
