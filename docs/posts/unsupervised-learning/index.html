@@ -379,6 +379,72 @@ Therefore, we can see that our <i>reconstructed image</i> is pretty much the sam
 </section>
 <section id="image-compression-using-matrix-approximation" class="level1">
 <h1>Image Compression using Matrix Approximation</h1>
+Now that we have understood how using SVD, we can get a fairly good approximation of the matrix <span class="math inline">\(A\)</span> using a much smaller subset of the decomposed matrices, we can go ahead and apply to this to <i>image compression</i>. In simple words, what we are trying to do is:
+<ol>
+<li>
+Represent an image as a matrix,
+</li><li>
+Decompose the matrix using SVD,
+</li><li>
+Use a smaller subset of these decomposed matrices to reconstruct the original image (matrix)
+</li></ol>
+For the purpose of this experiment, the chosen image is:
+<center>
+<figure class="figure">
+<img src="spongebob.jpg" height="500" width="800" caption="Mr. Squarepants" class="figure-img">
+<figcaption class="figure-caption">
+SpongeBob SquarePants
+</figcaption>
+</figure>
+</center>
+<p>Now, let us get started:</p>
+<div class="cell" data-execution_count="39">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> PIL</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> urllib</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#function to read an image and save it as a numpy array </span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> read_image(url):</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.array(PIL.Image.<span class="bu">open</span>(urllib.request.urlopen(url)))</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://i.pinimg.com/originals/1f/f9/68/1ff9682f61e99f217bb67a61f02ecb56.jpg"</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> read_image(url)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>np.shape(img)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="39">
+<pre><code>(1200, 1920, 3)</code></pre>
+</div>
+</div>
+<p>Therefore, we can see that our image is stored as a numpy object of shape: <span class="math inline">\(1200 \times 1920 \times 3\)</span>, this means that there are <span class="math inline">\(1200\)</span> rows, <span class="math inline">\(1920\)</span> columns, and the <span class="math inline">\(3\)</span> is representative of the RGB channels - since at each pixel there is a numerical value for all red, green, and blue. To simplify our task of image compression using SVD, we want to deal with a 2-Dimensional matrix. To do this, we can convert this image to <i>greyscale</i> in which case it will have dimensions: <span class="math inline">\(1200 \times 1920\)</span> - <span class="math inline">\(1200\)</span> rows, <span class="math inline">\(1920\)</span> columns, and each value will range from <span class="math inline">\(0\)</span> to <span class="math inline">\(255\)</span>. Where, <span class="math inline">\(0\)</span> = Black, and <span class="math inline">\(255\)</span> = White. Converting our image to <i>greyscale</i>:</p>
+<div class="cell" data-execution_count="41">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> to_greyscale(image):</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">1</span> <span class="op">-</span> np.dot(image[...,:<span class="dv">3</span>], [<span class="fl">0.2989</span>, <span class="fl">0.5870</span>, <span class="fl">0.1140</span>])</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>grey_img <span class="op">=</span> to_greyscale(img)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>np.shape(grey_img)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="41">
+<pre><code>(1200, 1920)</code></pre>
+</div>
+</div>
+<p>As mentioned, the image is now a <span class="math inline">\(1200 \times 1920\)</span> matrix. Now, let us visualize the original and greyscale image side-by-side:</p>
+<div class="cell" data-execution_count="43">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>fig, axarr <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize <span class="op">=</span> (<span class="dv">15</span>, <span class="dv">5</span>))</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">0</span>].imshow(img)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">0</span>].axis(<span class="st">"off"</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">0</span>].<span class="bu">set</span>(title <span class="op">=</span> <span class="st">"Original Image"</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">1</span>].imshow(grey_img, cmap <span class="op">=</span> <span class="st">"Greys"</span>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">1</span>].axis(<span class="st">"off"</span>)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">1</span>].<span class="bu">set</span>(title <span class="op">=</span> <span class="st">"Greyscale Image"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="43">
+<pre><code>[Text(0.5, 1.0, 'Greyscale Image')]</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-11-output-2.png" class="img-fluid"></p>
+</div>
+</div>
 
 
 </section>
