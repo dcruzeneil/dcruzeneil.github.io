@@ -242,7 +242,7 @@ Develop an appreciation of how SVD allows us to approximate a matrix <span class
 <section id="getting-acquainted-with-numpys-implementation-of-svd" class="level4">
 <h4 class="anchored" data-anchor-id="getting-acquainted-with-numpys-implementation-of-svd"><font color="green">Getting Acquainted with <i>Numpy’s</i> Implementation of SVD</font></h4>
 <p>Before we decompose a matrix <span class="math inline">\(A\)</span> using SVD, we need to construct a sample matrix <span class="math inline">\(A\)</span>:</p>
-<div class="cell" data-execution_count="8">
+<div class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">12345</span>)</span>
@@ -254,9 +254,9 @@ Develop an appreciation of how SVD allows us to approximate a matrix <span class
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> a1<span class="op">@</span>a2 <span class="op">+</span> <span class="fl">0.1</span><span class="op">*</span>np.random.rand(<span class="dv">5</span>, <span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now, we can go ahead and visualize this matrix:</p>
-<div class="cell" data-execution_count="30">
+<div class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>A</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="30">
+<div class="cell-output cell-output-display" data-execution_count="2">
 <pre><code>array([[11.09940146, 11.06768737, 12.07908225, 14.01709143, 14.00268493,
         11.08003702, 10.09037225, 11.00246762],
        [ 7.04917473,  8.05262552,  9.0596366 , 10.00519575, 10.08950895,
@@ -270,34 +270,34 @@ Develop an appreciation of how SVD allows us to approximate a matrix <span class
 </div>
 </div>
 <p>With matrices, it is often of utility to visualize them as an image to get an understanding of the underlying pattern:</p>
-<div class="cell" data-execution_count="11">
+<div class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plt.imshow(A, cmap <span class="op">=</span> <span class="st">"Greys"</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> plt.gca().axis(<span class="st">"on"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> plt.gca().axis(<span class="st">"off"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <p><img src="index_files/figure-html/cell-4-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Now that we have our matrix <span class="math inline">\(A\)</span>, we can use <i>numpy’s</i> implementation of SVD, to get <span class="math inline">\(U\)</span>, <span class="math inline">\(V\)</span>, and <i>sigma</i> which has been discussed above. The only difference is that we get <i>sigma</i> and not <span class="math inline">\(D\)</span>. This means that we get a numpy array of the singular values of <span class="math inline">\(A\)</span>, but we have to construct a diagonal matrix - <span class="math inline">\(D\)</span> - ourselves, where the diagonals contain the singular values of <span class="math inline">\(A\)</span>. We can wrap up all of these functionalities in a single function:</p>
-<div class="cell" data-execution_count="19">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> getValues():</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    U, sigma, V <span class="op">=</span> np.linalg.svd(A)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    D <span class="op">=</span> diagonalize(sigma)</span>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> getValues(matrix):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    U, sigma, V <span class="op">=</span> np.linalg.svd(matrix)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    D <span class="op">=</span> diagonalize(matrix, sigma)</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> U, D, V</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> diagonalize(sigma):</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> diagonalize(matrix, sigma):</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># creating the D matrix in the SVD </span></span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># here the matrix of 0s will have the same shape as A</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    D <span class="op">=</span> np.zeros_like(A, dtype<span class="op">=</span><span class="bu">float</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    D <span class="op">=</span> np.zeros_like(matrix, dtype<span class="op">=</span><span class="bu">float</span>)</span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># putting the singular values along the diagonal of D</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    D[:<span class="bu">min</span>(A.shape),:<span class="bu">min</span>(A.shape)] <span class="op">=</span> np.diag(sigma)  </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    D[:<span class="bu">min</span>(matrix.shape),:<span class="bu">min</span>(matrix.shape)] <span class="op">=</span> np.diag(sigma)  </span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> D</span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>U, D, V <span class="op">=</span> getValues()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>U, D, V <span class="op">=</span> getValues(A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now, let us try to reconstruct <span class="math inline">\(A\)</span> using the decomposed matrices as displayed in the formula above and compare it to the original <span class="math inline">\(A\)</span>:</p>
-<div class="cell" data-execution_count="22">
+<div class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>U <span class="op">@</span> D <span class="op">@</span> V</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="22">
+<div class="cell-output cell-output-display" data-execution_count="5">
 <pre><code>array([[11.09940146, 11.06768737, 12.07908225, 14.01709143, 14.00268493,
         11.08003702, 10.09037225, 11.00246762],
        [ 7.04917473,  8.05262552,  9.0596366 , 10.00519575, 10.08950895,
@@ -310,9 +310,9 @@ Develop an appreciation of how SVD allows us to approximate a matrix <span class
         10.0187818 , 10.01258415, 11.06875958]])</code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="23">
+<div class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>A</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="23">
+<div class="cell-output cell-output-display" data-execution_count="6">
 <pre><code>array([[11.09940146, 11.06768737, 12.07908225, 14.01709143, 14.00268493,
         11.08003702, 10.09037225, 11.00246762],
        [ 7.04917473,  8.05262552,  9.0596366 , 10.00519575, 10.08950895,
@@ -343,16 +343,16 @@ Pick the first <span class="math inline">\(k\)</span> rows of V
 <p>Which gives us:<br><br> <span class="math display">\[
 A = UDV^{T} = \{m \times k\} \times \{k \times k\} \times \{k \times n\} = \{m \times n\}
 \]</span> <br>Therefore, we can get a <span class="math inline">\(m \times n\)</span> approximation of <span class="math inline">\(A\)</span> using a smaller subset of these decomposed matrices. The way this works is that in SVD, the obtained singular values are present in decreasing order of “importance”. This means that the first singular value is typically the most important in terms of capturing the primary patterns, structures, and variations of the data, and this “importance” keeps on decreasing as we go down. Therefore, depending on our value of <span class="math inline">\(k\)</span>, we can get a pretty good approximation of the original matrix using a relatively smaller subset of the decomposed matrices. To see this in practice, let us create a function that will allow us to visualize our: original matrix <span class="math inline">\(A\)</span> and the reconstructed matrix <span class="math inline">\(A\)</span> with a smaller subset of the decomposed matrices, as images. This will allow us to get an appreciation of how similar the reconstructed matrix <span class="math inline">\(A\)</span> is to the original one, while saving us a lot of space because we used a smaller subset of the matrices:</p>
-<div class="cell" data-execution_count="36">
+<div class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compareImages(A, A_):</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    fig, axarr <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize <span class="op">=</span> (<span class="dv">15</span>, <span class="dv">5</span>))</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    axarr[<span class="dv">0</span>].imshow(A, cmap <span class="op">=</span> <span class="st">"Greys"</span>)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    axarr[<span class="dv">0</span>].axis(<span class="st">"on"</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    axarr[<span class="dv">0</span>].axis(<span class="st">"off"</span>)</span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    axarr[<span class="dv">0</span>].<span class="bu">set</span>(title <span class="op">=</span> <span class="st">"Original Image"</span>)</span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    axarr[<span class="dv">1</span>].imshow(A_, cmap <span class="op">=</span> <span class="st">"Greys"</span>)</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    axarr[<span class="dv">1</span>].axis(<span class="st">"on"</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    axarr[<span class="dv">1</span>].axis(<span class="st">"off"</span>)</span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    axarr[<span class="dv">1</span>].<span class="bu">set</span>(title <span class="op">=</span> <span class="st">"Reconstructed Image"</span>)</span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">#creating subsets of the decomposed matrices</span></span>
@@ -398,7 +398,7 @@ SpongeBob SquarePants
 </figure>
 </center>
 <p>Now, let us get started:</p>
-<div class="cell" data-execution_count="39">
+<div class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> PIL</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> urllib</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -411,24 +411,24 @@ SpongeBob SquarePants
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> read_image(url)</span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>np.shape(img)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="39">
+<div class="cell-output cell-output-display" data-execution_count="8">
 <pre><code>(1200, 1920, 3)</code></pre>
 </div>
 </div>
 <p>Therefore, we can see that our image is stored as a numpy object of shape: <span class="math inline">\(1200 \times 1920 \times 3\)</span>, this means that there are <span class="math inline">\(1200\)</span> rows, <span class="math inline">\(1920\)</span> columns, and the <span class="math inline">\(3\)</span> is representative of the RGB channels - since at each pixel there is a numerical value for all red, green, and blue. To simplify our task of image compression using SVD, we want to deal with a 2-Dimensional matrix. To do this, we can convert this image to <i>greyscale</i> in which case it will have dimensions: <span class="math inline">\(1200 \times 1920\)</span> - <span class="math inline">\(1200\)</span> rows, <span class="math inline">\(1920\)</span> columns, and each value will range from <span class="math inline">\(0\)</span> to <span class="math inline">\(255\)</span>. Where, <span class="math inline">\(0\)</span> = Black, and <span class="math inline">\(255\)</span> = White. Converting our image to <i>greyscale</i>:</p>
-<div class="cell" data-execution_count="41">
+<div class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> to_greyscale(image):</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">1</span> <span class="op">-</span> np.dot(image[...,:<span class="dv">3</span>], [<span class="fl">0.2989</span>, <span class="fl">0.5870</span>, <span class="fl">0.1140</span>])</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>grey_img <span class="op">=</span> to_greyscale(img)</span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>np.shape(grey_img)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="41">
+<div class="cell-output cell-output-display" data-execution_count="9">
 <pre><code>(1200, 1920)</code></pre>
 </div>
 </div>
 <p>As mentioned, the image is now a <span class="math inline">\(1200 \times 1920\)</span> matrix. Now, let us visualize the original and greyscale image side-by-side:</p>
-<div class="cell" data-execution_count="43">
+<div class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>fig, axarr <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize <span class="op">=</span> (<span class="dv">15</span>, <span class="dv">5</span>))</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">0</span>].imshow(img)</span>
@@ -438,15 +438,42 @@ SpongeBob SquarePants
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">1</span>].imshow(grey_img, cmap <span class="op">=</span> <span class="st">"Greys"</span>)</span>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">1</span>].axis(<span class="st">"off"</span>)</span>
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>axarr[<span class="dv">1</span>].<span class="bu">set</span>(title <span class="op">=</span> <span class="st">"Greyscale Image"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="43">
+<div class="cell-output cell-output-display" data-execution_count="10">
 <pre><code>[Text(0.5, 1.0, 'Greyscale Image')]</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <p><img src="index_files/figure-html/cell-11-output-2.png" class="img-fluid"></p>
 </div>
 </div>
+<section id="reconstructing-the-image-from-its-singular-value-decomposition" class="level4">
+<h4 class="anchored" data-anchor-id="reconstructing-the-image-from-its-singular-value-decomposition"><font color="green">Reconstructing the Image from its Singular Value Decomposition</font></h4>
+<p>Now, we will write the function <code>svd_reconstruct</code> which will reconstruct an image using <span class="math inline">\(k\)</span> singular values:</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> svd_reconstruct(image, k):</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    U, D, V <span class="op">=</span> getValues(image)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    U_ <span class="op">=</span> U[:,:k]</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    D_ <span class="op">=</span> D[:k, :k]</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    V_ <span class="op">=</span> V[:k, :]</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    grey_img_recon <span class="op">=</span> U_ <span class="op">@</span> D_ <span class="op">@</span> V_</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> grey_img_recon</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, we can go ahead and visualize how our reconstructed image would look with, let’s say, <span class="math inline">\(k = 50\)</span> singular values:</p>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>compareImages(grey_img, svd_reconstruct(grey_img, <span class="dv">50</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-13-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="experimenting-with-different-values-of-k" class="level4">
+<h4 class="anchored" data-anchor-id="experimenting-with-different-values-of-k"><font color="green">Experimenting with Different Values of <span class="math inline">\(k\)</span></font></h4>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> svd_experiment():</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"HELLO"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
