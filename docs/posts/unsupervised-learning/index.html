@@ -277,7 +277,7 @@ Develop an appreciation of how SVD allows us to approximate a matrix <span class
 <p><img src="index_files/figure-html/cell-4-output-1.png" class="img-fluid"></p>
 </div>
 </div>
-<p>Now that we have our matrix <span class="math inline">\(A\)</span>, we can use <i>numpy’s</i> implementation of SVD, to get <span class="math inline">\(U\)</span>, <span class="math inline">\(V\)</span>, and <i>sigma</i> which has been discussed above. The only difference is that we get <i>sigma</i> and not <span class="math inline">\(D\)</span>. This means that we get a numpy array of the singular values of <span class="math inline">\(A\)</span>, but we have to construct a diagonal matrix - <span class="math inline">\(D\)</span> - ourselves, where the diagonals contain the singular values of <span class="math inline">\(A\)</span>. We can wrap up all of these functionalities in a single function:</p>
+<p>Now that we have our matrix <span class="math inline">\(A\)</span>, we can use <i>numpy’s</i> implementation of SVD, to get <span class="math inline">\(U\)</span>, <span class="math inline">\(V\)</span>, and <i>sigma</i> which has been discussed above. The only difference is that we get <i>sigma</i> and not <span class="math inline">\(D\)</span>. This means that we get a numpy array of the singular values of <span class="math inline">\(A\)</span>, but we have to construct a diagonal matrix - <span class="math inline">\(D\)</span> - ourselves, where the diagonals contain the singular values of <span class="math inline">\(A\)</span>. We can wrap up all of these functionalities in a single <code>getValues</code> function, which will call the <code>diagonalize</code> function to create the matrix <span class="math inline">\(D\)</span> out of <i>sigma</i>:</p>
 <div class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> getValues(matrix):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    U, sigma, V <span class="op">=</span> np.linalg.svd(matrix)</span>
@@ -368,12 +368,12 @@ A = UDV^{T} = \{m \times k\} \times \{k \times k\} \times \{k \times n\} = \{m \
 <p><img src="index_files/figure-html/cell-8-output-1.png" class="img-fluid"></p>
 </div>
 </div>
-Therefore, we can see that our <i>reconstructed image</i> is pretty much the same as the original image, and we have reduced the dimensions of our problem from:
+Therefore, we can see that our <i>reconstructed image</i> is pretty much the same as the original image, and we have reduced the size of our problem from:
 <ol>
 <li>
-<span class="math inline">\(A_\text{original} = UDV^{T} = \{5 \times 5\} \times \{5 \times 8\} \times \{8 \times 8\} = \{5 \times 8\}\)</span>, to
+<span class="math inline">\(A_\text{original} = \{5 \times 8\} = 40 \text{ units}\)</span>, to
 </li><li>
-<span class="math inline">\(A_\text{reconstructed} = U_{\text{k}}D_{\text{k}}V_{\text{k}}^{T} = \{5 \times 1\} \times \{1 \times 1\} \times \{1 \times 8\} = \{5 \times 8\}\)</span>
+<span class="math inline">\(A_\text{reconstructed} = U_{\text{k}}D_{\text{k}}V_{\text{k}}^{T} = \{5 \times 1\} + \{1 \times 1\} + \{1 \times 8\} = 14 \text{ units}\)</span>
 </li></ol>
 </section>
 </section>
@@ -467,13 +467,94 @@ SpongeBob SquarePants
 </section>
 <section id="experimenting-with-different-values-of-k" class="level4">
 <h4 class="anchored" data-anchor-id="experimenting-with-different-values-of-k"><font color="green">Experimenting with Different Values of <span class="math inline">\(k\)</span></font></h4>
+<p>In this, part of the code, we first want to modify our <code>svd_reconstruct</code> to incorporate the calculation of how much space we are saving for differing values of <span class="math inline">\(k\)</span>. The formula for this would be:<br><br> <span class="math display">\[
+\text{Percent Storage} = \frac{\text{Storage Needed for Reconstructed}}{\text{Storage Needed for Original}} = \frac{\{(m \times k) + (k \times k) + (k \times n)\} \times 8 \text{ bits}}{m \times n \times 8 \text{ bits}}
+\]</span></p>
+<p><span class="math display">\[
+= (\frac{mk + kk + kn}{mn}) \times 100
+\]</span> <br>We know, that the matrix of our original image contains <span class="math inline">\(m \times n\)</span> values - each of which is 8 bytes, if we perform SVD and choose <span class="math inline">\(k\)</span> singular values, then we have <span class="math inline">\(mk + kk + kn\)</span> values - each of which is 8 bytes! Thus, the above formula represents the way in which we can achieve percent storage.</p>
+<p><b><u>Note</u>: Percent Storage is a measure of what percentage of the original size is the reconstructed image using! So, % Storage = <span class="math inline">\(30\)</span>% means that the reconstructed image’s storage size is <span class="math inline">\(30\)</span>% of that of the original!</b></p>
 <div class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> svd_experiment():</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"HELLO"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> svd_reconstruct(image, k):</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    U, D, V <span class="op">=</span> getValues(image)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    U_ <span class="op">=</span> U[:,:k]</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    D_ <span class="op">=</span> D[:k, :k]</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    V_ <span class="op">=</span> V[:k, :]</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    grey_img_recon <span class="op">=</span> U_ <span class="op">@</span> D_ <span class="op">@</span> V_</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">#code for calculating percent storage</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    reconstructedStorage <span class="op">=</span> (image.shape[<span class="dv">0</span>] <span class="op">*</span> k) <span class="op">+</span> (k <span class="op">*</span> k) <span class="op">+</span> (k <span class="op">*</span> image.shape[<span class="dv">1</span>])</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    originalStorage <span class="op">=</span> image.shape[<span class="dv">0</span>] <span class="op">*</span> image.shape[<span class="dv">1</span>]</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    percentStorage <span class="op">=</span> np.<span class="bu">round</span>((reconstructedStorage<span class="op">/</span>originalStorage) <span class="op">*</span> <span class="dv">100</span>, <span class="dv">2</span>)</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">#returning reconstructed image, and % storage</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> grey_img_recon, percentStorage</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-
-
+<p>Now, we want to write our <code>svd_experiment</code> function which will help us look at the effects that varying size of <span class="math inline">\(k\)</span> has on: the quality of the image, and the % storage:</p>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> svd_experiment(image):</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    rows <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    cols <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    fig, axarr <span class="op">=</span> plt.subplots(rows, cols, figsize <span class="op">=</span> (<span class="dv">25</span>, <span class="dv">10</span>))</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    k <span class="op">=</span> [<span class="dv">13</span> <span class="op">*</span> i <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">21</span>)]</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    index <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(rows):</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(cols):</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>            <span class="co">#using the value of k at a particular index and then incrementing</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>            reconstructedImg, perStorage <span class="op">=</span> svd_reconstruct(image, k[index])</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>            index<span class="op">+=</span><span class="dv">1</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>            <span class="co">#showing the reconstructed image</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>            axarr[i][j].imshow(reconstructedImg, cmap <span class="op">=</span> <span class="st">"Greys"</span>)</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>            axarr[i][j].axis(<span class="st">"off"</span>)</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>            axarr[i][j].<span class="bu">set</span>(title <span class="op">=</span> <span class="ss">f"k = </span><span class="sc">{</span>k[index<span class="op">-</span><span class="dv">1</span>]<span class="sc">}</span><span class="ss"> Singular Values, % Storage = </span><span class="sc">{</span>perStorage<span class="sc">}</span><span class="ss">%"</span>)</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>    fig.tight_layout()</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>svd_experiment(grey_img)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-15-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Therefore, we can see that as the number of <span class="math inline">\(k\)</span> decrease, the quality of the picture becomes blurrier, however the % storage falls. For example in our situation for <span class="math inline">\(k = 13\)</span>, the reconstructed image’s size is <span class="math inline">\(1.77\)</span>% of the original image. However, the quality of the image is really low.</p>
+<p>To get an appreciation for SVD, we should realize that for around <span class="math inline">\(k = 104\)</span>, the reconstructed image becomes pretty similar to the original, but the reconstructed image only takes 14.55% the storage that the original one took!</p>
 </section>
+</section>
+<section id="optional-extras" class="level1">
+<h1>Optional Extras</h1>
+In this section of the blog post, we want to modify our <code>svd_reconstruct</code> function to allow the user to:
+<ol>
+<li>
+Specify a Desired Compression Factor and Select the Number of Components <span class="math inline">\(k\)</span> based on this Selection
+</li><li>
+Specify a Desired Threshold <i>epsilon</i> for the Singular Values
+</li></ol>
+<div class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> svd_reconstruct(image, k, cf <span class="op">=</span> <span class="dv">0</span>, epsilon <span class="op">=</span> <span class="dv">0</span>):</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    U, D, V <span class="op">=</span> getValues(image)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    U_ <span class="op">=</span> U[:,:k]</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    D_ <span class="op">=</span> D[:k, :k]</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    V_ <span class="op">=</span> V[:k, :]</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    grey_img_recon <span class="op">=</span> U_ <span class="op">@</span> D_ <span class="op">@</span> V_</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">#code for calculating percent storage</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    reconstructedStorage <span class="op">=</span> (image.shape[<span class="dv">0</span>] <span class="op">*</span> k) <span class="op">+</span> (k <span class="op">*</span> k) <span class="op">+</span> (k <span class="op">*</span> image.shape[<span class="dv">1</span>])</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    originalStorage <span class="op">=</span> image.shape[<span class="dv">0</span>] <span class="op">*</span> image.shape[<span class="dv">1</span>]</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    percentStorage <span class="op">=</span> np.<span class="bu">round</span>((reconstructedStorage<span class="op">/</span>originalStorage) <span class="op">*</span> <span class="dv">100</span>, <span class="dv">2</span>)</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">#returning reconstructed image, and % storage</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> grey_img_recon, percentStorage</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, yadadada:</p>
+<div class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<pre><code>array([208791.42223561,  43046.20788775,  31331.82614652,  27577.84978513,
+        22079.29724434])</code></pre>
+</div>
+</div>
+<p>Finally, yadadada:</p>
+
+
 </section>
 
 </main> <!-- /main -->
