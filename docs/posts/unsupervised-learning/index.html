@@ -523,38 +523,114 @@ SpongeBob SquarePants
 In this section of the blog post, we want to modify our <code>svd_reconstruct</code> function to allow the user to:
 <ol>
 <li>
-Specify a Desired Compression Factor and Select the Number of Components <span class="math inline">\(k\)</span> based on this Selection
+Specify a Desired Compression Factor and Select the Number of Components <span class="math inline">\(k\)</span> based on this Selection:<br><br> <span class="math display">\[
+        \text{Compression Factor (CF)} = \frac{\text{Size of Compressed Bits}}{\text{Size of Original Bits}}
+        \]</span> <span class="math display">\[
+        \text{CF} =\frac{mk + k^{2} + kn}{mn} = \frac{k^2 + k(m+n)}{mn}
+        \]</span> <span class="math display">\[
+        k^2 + k(m+n) = (mn) \times \text{ CF}
+        \]</span> <span class="math display">\[
+        k^2 + k(m+n) - [(mn) \times \text{ CF}] = 0
+        \]</span> Therefore, we can solve this quadratic equation and get the value for <span class="math inline">\(k\)</span>, for the user provided compression factor!<br><br>
 </li><li>
-Specify a Desired Threshold <i>epsilon</i> for the Singular Values
+Specify a Desired Threshold <i>epsilon</i> for the Singular Values: selecting all singular values <span class="math inline">\(i\)</span>, such that:<br><br> <span class="math display">\[
+            \sigma_{i} \geq \epsilon_{\text{threshold}}
+        \]</span>
 </li></ol>
+<p><b><u>Note</u>: The following implementation assumes that the user will either only specify the (1) <i>compression factor</i>, or only the (2) <i>epsilon factor</i>, or only the explicit value of (3) <i>k - Singular Values</i></b></p>
 <div class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> svd_reconstruct(image, k, cf <span class="op">=</span> <span class="dv">0</span>, epsilon <span class="op">=</span> <span class="dv">0</span>):</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    U, D, V <span class="op">=</span> getValues(image)</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    U_ <span class="op">=</span> U[:,:k]</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    D_ <span class="op">=</span> D[:k, :k]</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    V_ <span class="op">=</span> V[:k, :]</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    grey_img_recon <span class="op">=</span> U_ <span class="op">@</span> D_ <span class="op">@</span> V_</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">#code for calculating percent storage</span></span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    reconstructedStorage <span class="op">=</span> (image.shape[<span class="dv">0</span>] <span class="op">*</span> k) <span class="op">+</span> (k <span class="op">*</span> k) <span class="op">+</span> (k <span class="op">*</span> image.shape[<span class="dv">1</span>])</span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    originalStorage <span class="op">=</span> image.shape[<span class="dv">0</span>] <span class="op">*</span> image.shape[<span class="dv">1</span>]</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    percentStorage <span class="op">=</span> np.<span class="bu">round</span>((reconstructedStorage<span class="op">/</span>originalStorage) <span class="op">*</span> <span class="dv">100</span>, <span class="dv">2</span>)</span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">#returning reconstructed image, and % storage</span></span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> grey_img_recon, percentStorage</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    grey_img_recon <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># checking for when compression factor is specified</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(cf<span class="op">!=</span><span class="dv">0</span>):</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>        <span class="co"># specifying the coefficients of the quadratic equation</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>        a <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>        b <span class="op">=</span> image.shape[<span class="dv">0</span>] <span class="op">+</span> image.shape[<span class="dv">1</span>]</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>        c <span class="op">=</span> (<span class="op">-</span><span class="dv">1</span>) <span class="op">*</span> cf  <span class="op">*</span> image.shape[<span class="dv">0</span>] <span class="op">*</span> image.shape[<span class="dv">1</span>]</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>        <span class="co"># only looking at the positive value - therefore ignoring the negative</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>        k <span class="op">=</span> (<span class="op">-</span>b <span class="op">+</span> np.sqrt((b<span class="op">*</span>b)<span class="op">-</span>(<span class="dv">4</span><span class="op">*</span>a<span class="op">*</span>c)))<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>a)</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>        <span class="co"># rounding the value of k - since we can only have whole values - and converting to integer</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>        k <span class="op">=</span> np.<span class="bu">round</span>(k)</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>        k <span class="op">=</span> k.astype(<span class="bu">int</span>)</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># reconstructing our grey image, based on this value of k </span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>        U, D, V <span class="op">=</span> getValues(image)</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>        U_ <span class="op">=</span> U[:,:k]</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>        D_ <span class="op">=</span> D[:k, :k]</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>        V_ <span class="op">=</span> V[:k, :]</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>        grey_img_recon <span class="op">=</span> U_ <span class="op">@</span> D_ <span class="op">@</span> V_</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># checking for when epsilon value is specified</span></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span>(epsilon<span class="op">!=</span><span class="dv">0</span>):</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>        U, sigma, V <span class="op">=</span> np.linalg.svd(image)</span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># finding k - the number of singular values which are </span></span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>        <span class="co"># above epsilon - the specified threshold </span></span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>        k <span class="op">=</span> (sigma[sigma<span class="op">&gt;</span>epsilon]).size</span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>        D <span class="op">=</span> diagonalize(image, sigma)</span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>        <span class="co"># reconstructing our grey image, based on this value of k </span></span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>        U_ <span class="op">=</span> U[:,:k]</span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>        D_ <span class="op">=</span> D[:k, :k]</span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>        V_ <span class="op">=</span> V[:k, :]</span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>        grey_img_recon <span class="op">=</span> U_ <span class="op">@</span> D_ <span class="op">@</span> V_</span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># checking for default case when only </span></span>
+<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span>(epsilon<span class="op">==</span><span class="dv">0</span> <span class="kw">and</span> cf<span class="op">==</span><span class="dv">0</span>):</span>
+<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>        U, D, V <span class="op">=</span> getValues(image)</span>
+<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a>        U_ <span class="op">=</span> U[:,:k]</span>
+<span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a>        D_ <span class="op">=</span> D[:k, :k]</span>
+<span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a>        V_ <span class="op">=</span> V[:k, :]</span>
+<span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a>        grey_img_recon <span class="op">=</span> U_ <span class="op">@</span> D_ <span class="op">@</span> V_</span>
+<span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-43"><a href="#cb21-43" aria-hidden="true" tabindex="-1"></a>    <span class="co">#code for calculating percent storage</span></span>
+<span id="cb21-44"><a href="#cb21-44" aria-hidden="true" tabindex="-1"></a>    reconstructedStorage <span class="op">=</span> (image.shape[<span class="dv">0</span>] <span class="op">*</span> k) <span class="op">+</span> (k <span class="op">*</span> k) <span class="op">+</span> (k <span class="op">*</span> image.shape[<span class="dv">1</span>])</span>
+<span id="cb21-45"><a href="#cb21-45" aria-hidden="true" tabindex="-1"></a>    originalStorage <span class="op">=</span> image.shape[<span class="dv">0</span>] <span class="op">*</span> image.shape[<span class="dv">1</span>]</span>
+<span id="cb21-46"><a href="#cb21-46" aria-hidden="true" tabindex="-1"></a>    percentStorage <span class="op">=</span> np.<span class="bu">round</span>((reconstructedStorage<span class="op">/</span>originalStorage) <span class="op">*</span> <span class="dv">100</span>, <span class="dv">2</span>)</span>
+<span id="cb21-47"><a href="#cb21-47" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-48"><a href="#cb21-48" aria-hidden="true" tabindex="-1"></a>    <span class="co">#returning reconstructed image, and % storage</span></span>
+<span id="cb21-49"><a href="#cb21-49" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> grey_img_recon, percentStorage</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Now, yadadada:</p>
+<section id="experiments-with-different-values-of-compression-factor" class="level4">
+<h4 class="anchored" data-anchor-id="experiments-with-different-values-of-compression-factor"><font color="green">Experiments with Different Values of Compression Factor</font></h4>
+<p>Now, we can go ahead get a reconstructed image with a compression factor of say <span class="math inline">\(0.05\)</span>! This means that the reconstructed image, will be <span class="math inline">\(0.05 * 100 = 5\)</span>% of the storage of the actual image:</p>
+<div class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>reconstructedImage, perStorage <span class="op">=</span> svd_reconstruct(grey_img, <span class="dv">0</span>, <span class="fl">0.05</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>compareImages(grey_img, reconstructedImage)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-17-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Now, we can go ahead get a reconstructed image with a compression factor of say <span class="math inline">\(0.3\)</span>! This means that the reconstructed image, will be <span class="math inline">\(0.3 * 100 = 30\)</span>% of the storage of the actual image:</p>
 <div class="cell" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="17">
-<pre><code>array([208791.42223561,  43046.20788775,  31331.82614652,  27577.84978513,
-        22079.29724434])</code></pre>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>reconstructedImage, perStorage <span class="op">=</span> svd_reconstruct(grey_img, <span class="dv">0</span>, <span class="fl">0.3</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>compareImages(grey_img, reconstructedImage)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
 </div>
 </div>
-<p>Finally, yadadada:</p>
+<p>Therefore, we can see that as the compression factor goes up, the reconstructed image becomes more like the original image!</p>
+</section>
+<section id="experiments-with-different-values-of-epsilon---epsilon" class="level4">
+<h4 class="anchored" data-anchor-id="experiments-with-different-values-of-epsilon---epsilon"><font color="green">Experiments with Different Values of Epsilon - <span class="math inline">\(\epsilon\)</span></font></h4>
+<p>Finally, we can experiment providing an <span class="math inline">\(\epsilon\)</span> - epsilon value, which provides a threshold and only the singular values larger than this specified value will be selected. Let us say, we choose <span class="math inline">\(\epsilon = 13000\)</span> as our threshold. Therefore, only the singular values which are larger than <span class="math inline">\(13000\)</span> will be used in the image reconstruction:</p>
+<div class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>reconstructedImage, perStorage <span class="op">=</span> svd_reconstruct(grey_img, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">13000</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>compareImages(grey_img, reconstructedImage)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-19-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Let us say, we choose <span class="math inline">\(\epsilon = 130\)</span> as our threshold. Therefore, only the singular values which are larger than <span class="math inline">\(130\)</span> will be used in the image reconstruction:</p>
+<div class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>reconstructedImage, perStorage <span class="op">=</span> svd_reconstruct(grey_img, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">130</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>compareImages(grey_img, reconstructedImage)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Therefore, we can see that as our threshold for the singular values goes down, more and more singular values are used in the image reconstruction, and therefore the reconstructed image becomes more like the original!</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
