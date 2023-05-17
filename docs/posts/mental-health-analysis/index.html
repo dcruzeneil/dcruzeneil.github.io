@@ -232,19 +232,20 @@ background-size: cover;
 <section id="preparing-the-data" class="level1">
 <h1>Preparing the Data</h1>
 <section id="sampling-the-data" class="level4">
-<h4 class="anchored" data-anchor-id="sampling-the-data"><font color="orange">Sampling the Data</font></h4>
+<h4 class="anchored" data-anchor-id="sampling-the-data"><font color="green">Sampling the Data</font></h4>
 <p>Before, we begin doing anything it is important to understand that the <i>Sentiment140</i> is a huge data set, which makes many computations very time-consuming. Therefore, we are going to sample the data set to select <span class="math inline">\(50000\)</span> data points (rows) randomly. The code which was used to sample the data is:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="vs">r"datasetOriginal.csv"</span>, encoding<span class="op">=</span><span class="st">"latin-1"</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.sample(n<span class="op">=</span><span class="dv">50000</span>)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>df.to_csv(<span class="st">"dataset.csv"</span>, index <span class="op">=</span> <span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>So, now we are working with a dataset which is way more manageable!</p>
 </section>
 <section id="loading-the-data-and-feature-selection" class="level4">
-<h4 class="anchored" data-anchor-id="loading-the-data-and-feature-selection"><font color="orange">Loading the Data and Feature Selection</font></h4>
+<h4 class="anchored" data-anchor-id="loading-the-data-and-feature-selection"><font color="green">Loading the Data and Feature Selection</font></h4>
 <p>Before we perform any of our evaluations, we must prepare our data. For this, we will be using the <i>loadData</i> method from HelperClass:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> loadData(<span class="va">self</span>):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    columns <span class="op">=</span> [<span class="st">'Sentiment Score'</span>, <span class="st">'Tweet ID'</span>, <span class="st">'Time'</span>, <span class="st">'Query'</span>, <span class="st">'Username'</span>, <span class="st">'Tweet'</span>]</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(<span class="vs">r"../dataset.csv"</span>, encoding<span class="op">=</span><span class="st">"latin-1"</span>, names <span class="op">=</span> columns)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(<span class="vs">r"dataset.csv"</span>, encoding<span class="op">=</span><span class="st">"latin-1"</span>, names <span class="op">=</span> columns)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> df[[<span class="st">"Sentiment Score"</span>, <span class="st">"Tweet"</span>]]</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 In the above operation, we are assigning adequate feature (column) names to the data. This dataset has a bunch of features, however, we are primarily interested in the:
@@ -287,22 +288,22 @@ In the above operation, we are assigning adequate feature (column) names to the 
     <tr>
       <th>1</th>
       <td>0</td>
-      <td>is upset that he can't update his Facebook by ...</td>
+      <td>my last day</td>
     </tr>
     <tr>
       <th>2</th>
       <td>0</td>
-      <td>@Kenichan I dived many times for the ball. Man...</td>
+      <td>my elbow really hurts, whacked it off @lydiaro...</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0</td>
-      <td>my whole body feels itchy and like its on fire</td>
+      <td>4</td>
+      <td>@MildManneredBoy Well thank you very much sir</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0</td>
-      <td>@nationwideclass no, it's not behaving at all....</td>
+      <td>4</td>
+      <td>@KylieLuvsJonas we need creeper rings! like yo...</td>
     </tr>
   </tbody>
 </table>
@@ -314,15 +315,15 @@ In the above operation, we are assigning adequate feature (column) names to the 
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df.groupby(<span class="st">"Sentiment Score"</span>).size()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <pre><code>Sentiment Score
-0    800000
-4    800000
+0    24940
+4    25061
 dtype: int64</code></pre>
 </div>
 </div>
-<p>So, we can clearly see that there are <span class="math inline">\(800000\)</span> tweets which are: Negative (<span class="math inline">\(0\)</span>), and there are <span class="math inline">\(800000\)</span> tweets which are: Positive (<span class="math inline">\(4\)</span>)!</p>
+<p>So, we can clearly see that there are <span class="math inline">\(24940\)</span> tweets which are: Negative (<span class="math inline">\(0\)</span>), and there are <span class="math inline">\(25061\)</span> tweets which are: Positive (<span class="math inline">\(4\)</span>)!</p>
 </section>
 <section id="preprocessing-tasks" class="level4">
-<h4 class="anchored" data-anchor-id="preprocessing-tasks"><font color="orange"> Preprocessing Tasks </font></h4>
+<h4 class="anchored" data-anchor-id="preprocessing-tasks"><font color="green"> Preprocessing Tasks </font></h4>
 To increase accuracy, and to make our input data better, we perform certain “preprocessing” tasks on the raw text data. Peforming the following tasks on the data:
 <ol>
 <li>
@@ -343,12 +344,12 @@ Runs/Running/Ran <span class="math inline">\(\rightarrow\)</span> Run
 </li></ul>
 </li></ol>
 <div class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#for i in range(df.shape[0]):</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#    df["Tweet"][i] = hp.preprocess(df["Tweet"][i])</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(df.shape[<span class="dv">0</span>]):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">"Tweet"</span>][i] <span class="op">=</span> hp.preprocess(df[<span class="st">"Tweet"</span>][i])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="training-data-and-testing-data" class="level4">
-<h4 class="anchored" data-anchor-id="training-data-and-testing-data"><font color="orange">Training Data and Testing Data</font></h4>
+<h4 class="anchored" data-anchor-id="training-data-and-testing-data"><font color="green">Training Data and Testing Data</font></h4>
 <p>Before, we proceed with any operation it is important to divide our data into <i>training data</i> and <i>testing data</i>:</p>
 <div class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split </span>
@@ -357,7 +358,7 @@ Runs/Running/Ran <span class="math inline">\(\rightarrow\)</span> Run
 <p>The code above splits our entire data: the actual tweets, and the associated sentiment score - into training data and testing data. This data exists in the form of <i>pandas</i> dataframes. The <i>test_size</i> = 0.2, tells the function to save 20% of the data for testing, and the rest for training.</p>
 </section>
 <section id="creating-the-term-document-matrix-and-the-target-vector" class="level4">
-<h4 class="anchored" data-anchor-id="creating-the-term-document-matrix-and-the-target-vector"><font color="orange">Creating the Term-Document Matrix and the Target Vector</font></h4>
+<h4 class="anchored" data-anchor-id="creating-the-term-document-matrix-and-the-target-vector"><font color="green">Creating the Term-Document Matrix and the Target Vector</font></h4>
 Now that we have our training and testing data frames, we want to separate it into the:
 <ul>
 <li>
@@ -377,10 +378,9 @@ Row: each row contains information about one tweet (document), that is which wor
 <p>To create our term-document matrix, we can use the <i>CountVectorizer</i> from <i>scikit-learn</i>:</p>
 <div class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_extraction.text <span class="im">import</span> CountVectorizer</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#from sklearn.feature_extraction.text import TfidfVectorizer</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>cv <span class="op">=</span> CountVectorizer(min_df <span class="op">=</span> <span class="fl">0.001</span>, ngram_range<span class="op">=</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>cv <span class="op">=</span> CountVectorizer(min_df <span class="op">=</span> <span class="fl">0.001</span>, ngram_range<span class="op">=</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 In the above code, we create an instance of the <i>CountVectorizer</i> class. Here there are some important things to unpack:
 <ol>
@@ -416,23 +416,6 @@ We convert our <i>feature matrix</i> and <i>target vector</i> to numpy objects f
 </li><li>
 We change: <span class="math inline">\(y = \{0, 4\}^{n}\)</span> to <span class="math inline">\(y = \{0, 1\}^{n}\)</span> for a standard machine learning approach
 </li></ol>
-<div class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#setting the size of: training and testing samples</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>n_train <span class="op">=</span> <span class="dv">50000</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>n_test <span class="op">=</span> <span class="dv">8000</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> randomSample(n_train, n_test):</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">#training data</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    indices <span class="op">=</span> np.random.choice(X_train.shape[<span class="dv">0</span>], n_train, replace<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    X_trainFinal <span class="op">=</span> X_train[indices, :]</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    y_trainFinal <span class="op">=</span> y_train[indices]</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">#testing data</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    indices <span class="op">=</span> np.random.choice(X_test.shape[<span class="dv">0</span>], n_test, replace<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">#creating new feature matrix and target vector (smaller)</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    X_testFinal <span class="op">=</span> X_test[indices, :]</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    y_testFinal <span class="op">=</span> y_test[indices]</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> X_trainFinal, y_trainFinal, X_testFinal, y_testFinal</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 </section>
 </section>
 <section id="what-is-support-vector-machine---svm" class="level1">
@@ -440,12 +423,12 @@ We change: <span class="math inline">\(y = \{0, 4\}^{n}\)</span> to <span class=
 <p>Support Vector Machines (SVMs) is a popular machine learning model which is often used for classification.</p>
 </section>
 <section id="pegasos-primal-estimated-sub-gradient-solver-for-svm-primal-svm" class="level1">
-<h1>PEGASOS (<font color="orange">P</font>rimal <font color="orange">E</font>stimated sub-<font color="orange">G</font>r<font color="orange">A</font>dient <font color="orange">SO</font>lver for <font color="orange">S</font>VM) : <font color="orange">Primal SVM</font></h1>
+<h1>PEGASOS (<font color="green">P</font>rimal <font color="green">E</font>stimated sub-<font color="green">G</font>r<font color="green">A</font>dient <font color="green">SO</font>lver for <font color="green">S</font>VM) : <font color="green">Primal SVM</font></h1>
 In PEGASOS (Primal Form of SVMs), our empirical risk minimization problem is:<br><br>
 <center>
 <span class="math inline">\(\hat{\mathbf{w}} = \mathop{\mathrm{arg\,min}}_{\mathbf{w}} \; L(\mathbf{w})\;\)</span>
 </center>
-<br>where, our loss function <span class="math inline">\(L(\mathbf{w})\;\)</span> was defined as:<br><br>
+<br>where, our loss function <span class="math inline">\(L(\mathbf{w})\;\)</span>is defined as:<br><br>
 <center>
 <span class="math inline">\(L(\mathbf{w}) = \frac{\lambda}{2}||w||^2 + \frac{1}{n} \sum_{i = 1}^n \ell_{\text{hinge}}(\langle \mathbf{w}, \mathbf{x}_i \rangle, y_i)\;\)</span>
 </center>
@@ -461,27 +444,32 @@ In PEGASOS (Primal Form of SVMs), our empirical risk minimization problem is:<br
 <section id="training-the-model" class="level1">
 <h1>Training the Model</h1>
 <p>Now, that we have an understanding of how the PEGASOS (Primal SVM) method works, we can import the code that I wrote and <i>fit</i> it over our training data, then we can look at the accuracy we are able to achieve over the <i>training data</i> and the <i>testing data</i>:</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PrimalSVM <span class="im">import</span> PrimalSVM</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> SGDClassifier</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>PS <span class="op">=</span> PrimalSVM(<span class="fl">0.1</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#PS = SGDClassifier(loss='hinge', penalty='l2')</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#PS = LogisticRegression()</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> np.append(X_train, np.ones((X_train.shape[<span class="dv">0</span>],<span class="dv">1</span>)), axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> np.append(X_test, np.ones((X_test.shape[<span class="dv">0</span>],<span class="dv">1</span>)), axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <div class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PrimalSVM <span class="im">import</span> PrimalSVM</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> SGDClassifier</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#PS = PrimalSVM(0.1)</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>PS <span class="op">=</span> SGDClassifier(loss<span class="op">=</span><span class="st">'hinge'</span>, penalty<span class="op">=</span><span class="st">'l2'</span>)</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">#sampling using the function above</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>X_trainFin, y_trainFin, X_testFin, y_testFin <span class="op">=</span> randomSample(<span class="dv">50000</span>, <span class="dv">8000</span>)</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">#X_train = np.append(X_train, np.ones((X_train.shape[0],1)), axis=1)</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#X_test = np.append(X_test, np.ones((X_test.shape[0],1)), axis=1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>np.shape(X_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>(40000, 1118)</code></pre>
+</div>
 </div>
 <div class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#PS.fit(X_trainFin, y_trainFin, 0.1, 500000, 5000)</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>PS.fit(X_trainFin, y_trainFin)</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#print(f"Accuracy on Training Data: {PS.score_history[-1]}")</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Accuracy on Training Data: </span><span class="sc">{</span>PS<span class="sc">.</span>score(X_trainFin, y_trainFin)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Accuracy on Testing Data: </span><span class="sc">{</span>PS<span class="sc">.</span>score(X_test, y_test)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>PS.fit(X_train, y_train, <span class="fl">0.1</span>, <span class="dv">20000</span>, <span class="dv">100</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#PS.fit(X_train, y_train)</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Accuracy on Training Data: </span><span class="sc">{</span>PS<span class="sc">.</span>score(X_train, y_train)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Accuracy on Testing Data: </span><span class="sc">{</span>PS<span class="sc">.</span>score(X_test, y_test)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Accuracy on Training Data: 0.7865
-Accuracy on Testing Data: 0.76466875</code></pre>
+<pre><code>Accuracy on Training Data: 0.501925
+Accuracy on Testing Data: 0.49835016498350165</code></pre>
 </div>
 </div>
 </section>
@@ -489,50 +477,33 @@ Accuracy on Testing Data: 0.76466875</code></pre>
 <h1>Results and Experiments</h1>
 <p>In this section, we will be performing certain experiments to see how our model performs.</p>
 <section id="model-accuracy-for-ambiguous-sentences" class="level4">
-<h4 class="anchored" data-anchor-id="model-accuracy-for-ambiguous-sentences"><font color="orange">Model Accuracy for Ambiguous Sentences</font></h4>
+<h4 class="anchored" data-anchor-id="model-accuracy-for-ambiguous-sentences"><font color="green">Model Accuracy for Ambiguous Sentences</font></h4>
 <p>First, let us look at how the trained model does in predicting the sentiments of some sentences which could potentially cause an issue:</p>
-<div class="cell" data-execution_count="25">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>testSentences <span class="op">=</span> [<span class="st">"I am in pain"</span>, <span class="st">"I hate that movie"</span>, <span class="st">"Today has been a good day"</span>, <span class="st">"Yesterday was a pretty bad day"</span>, <span class="st">"I am not in pain anymore"</span>, <span class="st">"I love animals bad"</span>, <span class="st">"I love animals bad bad"</span>]</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> sent <span class="kw">in</span> testSentences:</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">#result = hp.sentencePredict()</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    tempMatrix <span class="op">=</span> hp.sentencePredict(sent, cv)</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> PS.predict(tempMatrix)</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    sentiment <span class="op">=</span> <span class="st">"Negative"</span></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(result):</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>        sentiment <span class="op">=</span> <span class="st">"Positive"</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Sentence:</span><span class="sc">{</span>sent<span class="sc">}</span><span class="ch">\n</span><span class="ss">Sentiment:</span><span class="sc">{</span>sentiment<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Sentence:I am in pain
-Sentiment:Negative
-
-Sentence:I hate that movie
-Sentiment:Negative
-
-Sentence:Today has been a good day
-Sentiment:Positive
-
-Sentence:Yesterday was a pretty bad day
-Sentiment:Negative
-
-Sentence:I am not in pain anymore
-Sentiment:Negative
-
-Sentence:I love animals bad
-Sentiment:Positive
-
-Sentence:I love animals bad bad
-Sentiment:Negative
-</code></pre>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>testSentences <span class="op">=</span> [<span class="st">"I am in pain"</span>, <span class="st">"I hate that movie"</span>, <span class="st">"Today has been a good day"</span>, <span class="st">"Yesterday was a pretty bad day"</span>, <span class="st">"I am not in pain anymore"</span>, <span class="st">"I love animals"</span>, <span class="st">"I love animals bad bad"</span>]</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> sent <span class="kw">in</span> testSentences:</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">#result = hp.sentencePredict()</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    tempMatrix <span class="op">=</span> hp.sentencePredict(sent, cv)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> PS.predict(tempMatrix)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    sentiment <span class="op">=</span> <span class="st">"Negative"</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(result):</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>        sentiment <span class="op">=</span> <span class="st">"Positive"</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Sentence:</span><span class="sc">{</span>sent<span class="sc">}</span><span class="ch">\n</span><span class="ss">Sentiment:</span><span class="sc">{</span>sentiment<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)-&gt;(n?,m?) (size 1118 is different from 1117)</code></pre>
 </div>
 </div>
 </section>
 <section id="evolution-of-training-score" class="level4">
-<h4 class="anchored" data-anchor-id="evolution-of-training-score"><font color="orange">Evolution of Training Score</font></h4>
+<h4 class="anchored" data-anchor-id="evolution-of-training-score"><font color="green">Evolution of Training Score</font></h4>
 </section>
 </section>
 <section id="concluding-discussion" class="level1">
 <h1>Concluding Discussion</h1>
+</section>
+<section id="experiments-on-synthetic-data" class="level1">
+<h1>Experiments on Synthetic Data</h1>
 </section>
 <section id="personal-reflection" class="level1">
 <h1>Personal Reflection</h1>
