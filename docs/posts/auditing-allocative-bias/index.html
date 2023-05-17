@@ -227,12 +227,12 @@ Creating a machine learning model that predicts an individual characteristic lik
 </li><li>
 Performing a “fairness audit” in order to assess whether our algorithm displays bias with respect to demographic characteristics (race or sex)
 </li></ol>
-<p>For the purpose of this blog post, we will be using the <u>folktables</u> package to download data on which we will perform the <i>bias audit</i>. Here, we will be using the data of individuals from the state of Alabama.</p>
+<p>For the purpose of this blog post, we will be using the <u>folktables</u> package to download data on which we will perform the <i>bias audit</i>. Here, we will be using the data of individuals from the state of New York!</p>
 </section>
 <section id="loading-and-setting-up-the-data" class="level1">
 <h1>Loading and Setting Up the Data</h1>
 <p>First, let us load the data and prepare it for our purposes:</p>
-<div class="cell" data-execution_count="20">
+<div class="cell" data-execution_count="44">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> folktables <span class="im">import</span> ACSDataSource, ACSEmployment, BasicProblem, adult_filter</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -248,16 +248,19 @@ Performing a “fairness audit” in order to assess whether our algorithm displ
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>STATE <span class="op">=</span> <span class="st">'AL'</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>STATE <span class="op">=</span> <span class="st">'NY'</span></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>data_source <span class="op">=</span> ACSDataSource(survey_year<span class="op">=</span><span class="st">'2018'</span>, horizon<span class="op">=</span><span class="st">'1-Year'</span>, survey<span class="op">=</span><span class="st">'person'</span>)</span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>acs_data <span class="op">=</span> data_source.get_data(states<span class="op">=</span>[STATE], download <span class="op">=</span> <span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Downloading data for 2018 1-Year person survey for NY...</code></pre>
+</div>
 </div>
 <p>Now, let us examine the first few rows of the data, to get an idea of it:</p>
-<div class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>acs_data.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="2">
+<div class="cell" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>acs_data.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="30">
 
 <div>
 
@@ -292,122 +295,122 @@ Performing a “fairness audit” in order to assess whether our algorithm displ
     <tr>
       <th>0</th>
       <td>P</td>
-      <td>2018GQ0000049</td>
-      <td>6</td>
+      <td>2018GQ0000012</td>
+      <td>2</td>
       <td>1</td>
-      <td>1600</td>
-      <td>3</td>
+      <td>3802</td>
       <td>1</td>
+      <td>36</td>
       <td>1013097</td>
-      <td>75</td>
-      <td>19</td>
+      <td>145</td>
+      <td>26</td>
       <td>...</td>
-      <td>140</td>
-      <td>74</td>
-      <td>73</td>
-      <td>7</td>
-      <td>76</td>
-      <td>75</td>
-      <td>80</td>
-      <td>74</td>
-      <td>7</td>
-      <td>72</td>
+      <td>146</td>
+      <td>146</td>
+      <td>21</td>
+      <td>24</td>
+      <td>266</td>
+      <td>263</td>
+      <td>21</td>
+      <td>146</td>
+      <td>265</td>
+      <td>144</td>
     </tr>
     <tr>
       <th>1</th>
       <td>P</td>
-      <td>2018GQ0000058</td>
-      <td>6</td>
+      <td>2018GQ0000040</td>
+      <td>2</td>
       <td>1</td>
-      <td>1900</td>
-      <td>3</td>
+      <td>2702</td>
       <td>1</td>
+      <td>36</td>
       <td>1013097</td>
-      <td>75</td>
-      <td>18</td>
+      <td>43</td>
+      <td>21</td>
       <td>...</td>
-      <td>76</td>
-      <td>78</td>
+      <td>6</td>
+      <td>42</td>
+      <td>43</td>
       <td>7</td>
-      <td>76</td>
-      <td>80</td>
-      <td>78</td>
-      <td>7</td>
-      <td>147</td>
-      <td>150</td>
-      <td>75</td>
+      <td>40</td>
+      <td>6</td>
+      <td>43</td>
+      <td>40</td>
+      <td>42</td>
+      <td>6</td>
     </tr>
     <tr>
       <th>2</th>
       <td>P</td>
-      <td>2018GQ0000219</td>
-      <td>6</td>
+      <td>2018GQ0000060</td>
+      <td>2</td>
       <td>1</td>
-      <td>2000</td>
-      <td>3</td>
+      <td>2001</td>
       <td>1</td>
+      <td>36</td>
       <td>1013097</td>
-      <td>118</td>
-      <td>53</td>
-      <td>...</td>
-      <td>117</td>
-      <td>121</td>
-      <td>123</td>
-      <td>205</td>
-      <td>208</td>
-      <td>218</td>
-      <td>120</td>
-      <td>19</td>
-      <td>123</td>
+      <td>88</td>
       <td>18</td>
+      <td>...</td>
+      <td>88</td>
+      <td>163</td>
+      <td>161</td>
+      <td>162</td>
+      <td>87</td>
+      <td>12</td>
+      <td>162</td>
+      <td>88</td>
+      <td>87</td>
+      <td>88</td>
     </tr>
     <tr>
       <th>3</th>
       <td>P</td>
-      <td>2018GQ0000246</td>
-      <td>6</td>
+      <td>2018GQ0000081</td>
+      <td>2</td>
       <td>1</td>
-      <td>2400</td>
-      <td>3</td>
+      <td>2401</td>
       <td>1</td>
+      <td>36</td>
       <td>1013097</td>
-      <td>43</td>
-      <td>28</td>
+      <td>109</td>
+      <td>85</td>
       <td>...</td>
-      <td>43</td>
-      <td>76</td>
-      <td>79</td>
-      <td>77</td>
-      <td>80</td>
-      <td>44</td>
-      <td>46</td>
-      <td>82</td>
-      <td>81</td>
-      <td>8</td>
+      <td>17</td>
+      <td>15</td>
+      <td>111</td>
+      <td>107</td>
+      <td>17</td>
+      <td>196</td>
+      <td>109</td>
+      <td>200</td>
+      <td>198</td>
+      <td>111</td>
     </tr>
     <tr>
       <th>4</th>
       <td>P</td>
-      <td>2018GQ0000251</td>
-      <td>6</td>
-      <td>1</td>
-      <td>2701</td>
-      <td>3</td>
-      <td>1</td>
-      <td>1013097</td>
-      <td>16</td>
-      <td>25</td>
-      <td>...</td>
-      <td>4</td>
+      <td>2018GQ0000103</td>
       <td>2</td>
-      <td>29</td>
-      <td>17</td>
-      <td>15</td>
-      <td>28</td>
-      <td>17</td>
-      <td>30</td>
-      <td>15</td>
       <td>1</td>
+      <td>1400</td>
+      <td>1</td>
+      <td>36</td>
+      <td>1013097</td>
+      <td>83</td>
+      <td>19</td>
+      <td>...</td>
+      <td>81</td>
+      <td>12</td>
+      <td>80</td>
+      <td>154</td>
+      <td>12</td>
+      <td>80</td>
+      <td>12</td>
+      <td>83</td>
+      <td>152</td>
+      <td>154</td>
     </tr>
   </tbody>
 </table>
@@ -415,13 +418,13 @@ Performing a “fairness audit” in order to assess whether our algorithm displ
 </div>
 </div>
 </div>
-<p>Each row in the above dataset corresponds to an individual citizen of Alabama who filled out the PUMS survey of 2018. Therefore, what we have is a <span class="math inline">\(n\)</span>x<span class="math inline">\(p\)</span> matrix, where <span class="math inline">\(n\)</span> = number of data points, and <span class="math inline">\(p\)</span> = number of features. We can see that there are a bunch of features in this dataset, and all of them might not be pertinent for our analysis. Therefore, we are only going to choose the features which are relevant for this blog post:</p>
-<div class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>possible_features<span class="op">=</span>[<span class="st">'AGEP'</span>, <span class="st">'SCHL'</span>, <span class="st">'MAR'</span>, <span class="st">'RELP'</span>, <span class="st">'DIS'</span>, <span class="st">'ESP'</span>, <span class="st">'CIT'</span>, <span class="st">'MIG'</span>, <span class="st">'MIL'</span>, <span class="st">'ANC'</span>, <span class="st">'NATIVITY'</span>, <span class="st">'DEAR'</span>, <span class="st">'DEYE'</span>, <span class="st">'DREM'</span>, <span class="st">'SEX'</span>, <span class="st">'RAC1P'</span>, <span class="st">'ESR'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Each row in the above dataset corresponds to an individual citizen of Texas who filled out the PUMS survey of 2018. Therefore, what we have is a <span class="math inline">\(n\)</span>x<span class="math inline">\(p\)</span> matrix, where <span class="math inline">\(n\)</span> = number of data points, and <span class="math inline">\(p\)</span> = number of features. We can see that there are a bunch of features in this dataset, and all of them might not be pertinent for our analysis. Therefore, we are only going to choose the features which are relevant for this blog post:</p>
+<div class="cell" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>possible_features<span class="op">=</span>[<span class="st">'AGEP'</span>, <span class="st">'SCHL'</span>, <span class="st">'MAR'</span>, <span class="st">'RELP'</span>, <span class="st">'DIS'</span>, <span class="st">'ESP'</span>, <span class="st">'CIT'</span>, <span class="st">'MIG'</span>, <span class="st">'MIL'</span>, <span class="st">'ANC'</span>, <span class="st">'NATIVITY'</span>, <span class="st">'DEAR'</span>, <span class="st">'DEYE'</span>, <span class="st">'DREM'</span>, <span class="st">'SEX'</span>, <span class="st">'RAC1P'</span>, <span class="st">'ESR'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now, since we want to predict <i>ESR</i> - Employment Status, based on every relevant feature except the <i>RAC1P</i> - Race, we want to remove these two features from the list of <i>possible_features</i>. This is because one of these features is our target (output), and the we are excluding the other one (race) to study racial bias in our machine learning model:</p>
-<div class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>features_to_use <span class="op">=</span> [f <span class="cf">for</span> f <span class="kw">in</span> possible_features <span class="cf">if</span> f <span class="kw">not</span> <span class="kw">in</span> [<span class="st">"ESR"</span>, <span class="st">"RAC1P"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>features_to_use <span class="op">=</span> [f <span class="cf">for</span> f <span class="kw">in</span> possible_features <span class="cf">if</span> f <span class="kw">not</span> <span class="kw">in</span> [<span class="st">"ESR"</span>, <span class="st">"RAC1P"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 Now that we know:
 <ol>
@@ -433,125 +436,126 @@ Target (ESR): the thing we are trying to predict
 Group (RAC1P): the group by which we wish to audit the bias
 </li></ol>
 <p>We can go ahead and create a <i>BasicProblem</i>:</p>
-<div class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>EmploymentProblem <span class="op">=</span> BasicProblem(</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    features<span class="op">=</span>features_to_use,</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    target<span class="op">=</span><span class="st">'ESR'</span>,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    target_transform<span class="op">=</span><span class="kw">lambda</span> x: x <span class="op">==</span> <span class="dv">1</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    group<span class="op">=</span><span class="st">'RAC1P'</span>,</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    preprocess<span class="op">=</span><span class="kw">lambda</span> x: x,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    postprocess<span class="op">=</span><span class="kw">lambda</span> x: np.nan_to_num(x, <span class="op">-</span><span class="dv">1</span>),</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>EmploymentProblem <span class="op">=</span> BasicProblem(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    features<span class="op">=</span>features_to_use,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    target<span class="op">=</span><span class="st">'ESR'</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    target_transform<span class="op">=</span><span class="kw">lambda</span> x: x <span class="op">==</span> <span class="dv">1</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    group<span class="op">=</span><span class="st">'RAC1P'</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    preprocess<span class="op">=</span><span class="kw">lambda</span> x: x,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    postprocess<span class="op">=</span><span class="kw">lambda</span> x: np.nan_to_num(x, <span class="op">-</span><span class="dv">1</span>),</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we can go ahead and extract our feature matrix, output labels vector, and the group (race) vector as numpy objects:</p>
-<div class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>features, label, group <span class="op">=</span> EmploymentProblem.df_to_numpy(acs_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>features, label, group <span class="op">=</span> EmploymentProblem.df_to_numpy(acs_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now, that we have all the necessary data, we can split our data into <i>training data</i> and <i>testing data</i>. Here, 80% of the data will be used for training and the remaining 20% will be used for testing:</p>
-<div class="cell" data-execution_count="92">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test, group_train, group_test <span class="op">=</span> train_test_split(features, label, group, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="35">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test, group_train, group_test <span class="op">=</span> train_test_split(features, label, group, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="basic-descriptives" class="level1">
 <h1>Basic Descriptives</h1>
 <p>Now, that we have our data set up, we can address some basic descriptives of the data which will aid us in our analysis later on. For this it is useful to make a <i>data frame</i> out of our data:</p>
-<div class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(X_train, columns <span class="op">=</span> features_to_use)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"group"</span>] <span class="op">=</span> group_train</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"label"</span>] <span class="op">=</span> y_train</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="36">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(X_train, columns <span class="op">=</span> features_to_use)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"group"</span>] <span class="op">=</span> group_train</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"label"</span>] <span class="op">=</span> y_train</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Question 1: How many individuals are in the data?</p>
-<div class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Answer 1: There are </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> people in the training data set!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="37">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Answer 1: There are </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> people in the training data set!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Answer 1: There are 38221 people in the training data set!</code></pre>
+<pre><code>Answer 1: There are 157573 people in the training data set!</code></pre>
 </div>
 </div>
 <p>Question 2: Of these individuals, what proportion have target label equal to 1? In employment prediction, these would correspond to employed individuals.</p>
-<div class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>employed <span class="op">=</span> df[df[<span class="st">'label'</span>]<span class="op">==</span><span class="va">True</span>]</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Answer 2: There are </span><span class="sc">{</span>employed<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> number of people in the training data set who are employed - have target label equal to True!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="38">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>employed <span class="op">=</span> df[df[<span class="st">'label'</span>]<span class="op">==</span><span class="va">True</span>]</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Answer 2: There are </span><span class="sc">{</span>employed<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> number of people in the training data set who are employed - have target label equal to True!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Answer 2: There are 15638 number of people in the training data set who are employed - have target label equal to True!</code></pre>
+<pre><code>Answer 2: There are 73262 number of people in the training data set who are employed - have target label equal to True!</code></pre>
 </div>
 </div>
 <p>Question 3: Of these individuals, how many are in each of the groups? <br><br>Answer 3: We can see a breakdown of how many people of each racial group are employed:</p>
-<div class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(employed.groupby(<span class="st">'group'</span>).size())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="39">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(employed.groupby(<span class="st">'group'</span>).size())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>group
-1    12020
-2     2976
-3       68
-4        1
-5        6
-6      226
-7        3
-8      147
-9      191
+1    52646
+2     8030
+3      177
+4        3
+5       66
+6     6778
+7       23
+8     3860
+9     1679
 dtype: int64</code></pre>
 </div>
 </div>
 <p>Question 4: In each group, what proportion of individuals have target label equal to 1? <br><br>Answer 4: The proportion of individuals in each group who are employed (have target label 1):</p>
-<div class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.groupby([<span class="st">'group'</span>])[[<span class="st">'label'</span>]].aggregate([np.mean]).<span class="bu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="40">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.groupby([<span class="st">'group'</span>])[[<span class="st">'label'</span>]].aggregate([np.mean]).<span class="bu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      label
        mean
 group      
-1      0.42
-2      0.37
-3      0.44
-4      1.00
-5      0.21
+1      0.47
+2      0.42
+3      0.43
+4      0.75
+5      0.34
 6      0.50
-7      0.27
-8      0.37
-9      0.29</code></pre>
+7      0.42
+8      0.44
+9      0.37</code></pre>
 </div>
 </div>
 <p>Question 5: Check for intersectional trends by studying the proportion of positive target labels broken out by your chosen group labels and an additional group label. For example, if you chose race (RAC1P) as your group, then you could also choose sex (SEX) and compute the proportion of positive labels by both race and sex. <br><br> Answer 5: For answering this question, first let us look at the positive labels broken down only by SEX. Then we can look at the intersectionality of RACE and SEX, by looking at positive labels broken down by these two group labels.</p>
-<div class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.groupby([<span class="st">'SEX'</span>])[[<span class="st">'label'</span>]].aggregate([np.mean]).<span class="bu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="41">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.groupby([<span class="st">'SEX'</span>])[[<span class="st">'label'</span>]].aggregate([np.mean]).<span class="bu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    label
      mean
 SEX      
-1.0  0.45
-2.0  0.37</code></pre>
+1.0  0.49
+2.0  0.44</code></pre>
 </div>
 </div>
-<p>We can see that: 45% of MEN (1.0) are employed, while 37% of WOMEN (2.0) are employed! Now let us look at the positive target labels broken down by both RACE and SEX:</p>
-<div class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.groupby([<span class="st">'group'</span>,<span class="st">'SEX'</span>])[[<span class="st">'label'</span>]].aggregate([np.mean]).<span class="bu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We can see that: 49% of MEN (1.0) are employed, while 44% of WOMEN (2.0) are employed! Now let us look at the positive target labels broken down by both RACE and SEX:</p>
+<div class="cell" data-execution_count="42">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.groupby([<span class="st">'group'</span>,<span class="st">'SEX'</span>])[[<span class="st">'label'</span>]].aggregate([np.mean]).<span class="bu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          label
            mean
 group SEX      
-1     1.0  0.47
-      2.0  0.38
-2     1.0  0.36
-      2.0  0.38
-3     1.0  0.48
+1     1.0  0.50
+      2.0  0.45
+2     1.0  0.40
+      2.0  0.44
+3     1.0  0.46
       2.0  0.39
 4     1.0  1.00
-5     1.0  0.23
-      2.0  0.19
-6     1.0  0.62
+      2.0  0.50
+5     1.0  0.39
+      2.0  0.29
+6     1.0  0.54
+      2.0  0.46
+7     1.0  0.35
+      2.0  0.50
+8     1.0  0.48
       2.0  0.41
-7     1.0  0.50
-      2.0  0.14
-8     1.0  0.46
-      2.0  0.28
-9     1.0  0.32
-      2.0  0.25</code></pre>
+9     1.0  0.36
+      2.0  0.38</code></pre>
 </div>
 </div>
 <p>We can visualize this data using a bar chart for easier understanding:</p>
-<div class="cell" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>bplot <span class="op">=</span> sns.barplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">"group"</span>, y<span class="op">=</span><span class="st">"label"</span>, hue<span class="op">=</span><span class="st">"SEX"</span>, errorbar<span class="op">=</span>(<span class="st">'ci'</span>, <span class="dv">0</span>))</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>bplot.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"Different Racial Groups"</span>, ylabel<span class="op">=</span><span class="st">"Proportion of People Employed"</span>)</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>plt.show(bplot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="43">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>bplot <span class="op">=</span> sns.barplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">"group"</span>, y<span class="op">=</span><span class="st">"label"</span>, hue<span class="op">=</span><span class="st">"SEX"</span>, errorbar<span class="op">=</span>(<span class="st">'ci'</span>, <span class="dv">0</span>))</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>bplot.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"Different Racial Groups"</span>, ylabel<span class="op">=</span><span class="st">"Proportion of People Employed"</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>plt.show(bplot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <p><img src="index_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
 </div>
@@ -573,17 +577,17 @@ Checking the performance of our model on the <i>testing data</i>
 </li></ol>
 <p>Let us get started with creating the function which utilizes Pipeline, for easier construction of our Logistic Regression models:</p>
 <div class="cell" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> polyLR(deg):</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> Pipeline([(<span class="st">"poly"</span>, PolynomialFeatures(degree <span class="op">=</span> deg)),</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>                   (<span class="st">"LR"</span>, LogisticRegression(penalty <span class="op">=</span> <span class="va">None</span>, max_iter <span class="op">=</span> <span class="dv">1000</span>))])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> polyLR(deg):</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> Pipeline([(<span class="st">"poly"</span>, PolynomialFeatures(degree <span class="op">=</span> deg)),</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                   (<span class="st">"LR"</span>, LogisticRegression(penalty <span class="op">=</span> <span class="va">None</span>, max_iter <span class="op">=</span> <span class="dv">1000</span>))])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now, we can use cross-validation to select which degree (number of polynomial features) works best for our data. The main principle behind cross-validation is that you can divide your training data into <span class="math inline">\(k\)</span> folds (chunks), and then train your model over <span class="math inline">\(k-1\)</span> chunks and then <i>validate</i> it over the last remaining chunk. Therefore, if you divide your training data into <span class="math inline">\(4\)</span> chunks - let us say - then each one of the <span class="math inline">\(4\)</span> chunks will act as the <i>validation data</i> once, with the rest of the chunks being used as <i>training data</i>. Therefore, in case of <span class="math inline">\(4\)</span> chunks, the <u>fit</u> function will be called <span class="math inline">\(4\)</span> times. Now, we can find the <i>mean</i> cross-validation score for varying degrees (number of polynomial features), and the degree which has the highest cross-validation score is most likely to perform the best on the <i>testing data</i>:</p>
 <div class="cell" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> deg <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">5</span>):</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    plr <span class="op">=</span> polyLR(deg <span class="op">=</span> deg)</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    cv_scores <span class="op">=</span> cross_val_score(plr, X_train, y_train, cv <span class="op">=</span> <span class="dv">5</span>)</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    mean_score <span class="op">=</span> cv_scores.mean()</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Polynomial Degree = </span><span class="sc">{</span>deg<span class="sc">}</span><span class="ss">, Score = </span><span class="sc">{</span>mean_score<span class="sc">.</span><span class="bu">round</span>(<span class="dv">3</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> deg <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">5</span>):</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    plr <span class="op">=</span> polyLR(deg <span class="op">=</span> deg)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    cv_scores <span class="op">=</span> cross_val_score(plr, X_train, y_train, cv <span class="op">=</span> <span class="dv">5</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    mean_score <span class="op">=</span> cv_scores.mean()</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Polynomial Degree = </span><span class="sc">{</span>deg<span class="sc">}</span><span class="ss">, Score = </span><span class="sc">{</span>mean_score<span class="sc">.</span><span class="bu">round</span>(<span class="dv">3</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Polynomial Degree = 0, Score = 0.591
 Polynomial Degree = 1, Score = 0.78
@@ -594,16 +598,16 @@ Polynomial Degree = 4, Score = 0.806</code></pre>
 </div>
 <p>Therefore, for our purposes it seems that Polynomial Degree = <span class="math inline">\(2\)</span> yields the best results during our cross-validation, so we can assume that this degree is also likely to perform the best on our <i>testing data</i>. Now, we can go ahead and create a Logistic Regression model with degrees = <span class="math inline">\(2\)</span>:</p>
 <div class="cell" data-execution_count="26">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>plr <span class="op">=</span> polyLR(deg <span class="op">=</span> <span class="dv">2</span>)</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>plr.fit(X_train, y_train)</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Score on Training Data: </span><span class="sc">{</span>plr<span class="sc">.</span>score(X_train, y_train)<span class="sc">.</span><span class="bu">round</span>(<span class="dv">3</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>plr <span class="op">=</span> polyLR(deg <span class="op">=</span> <span class="dv">2</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>plr.fit(X_train, y_train)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Score on Training Data: </span><span class="sc">{</span>plr<span class="sc">.</span>score(X_train, y_train)<span class="sc">.</span><span class="bu">round</span>(<span class="dv">3</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Score on Training Data: 0.81</code></pre>
 </div>
 </div>
 <p>Now, finally we can check the performance of our model on the <i>testing data</i>:</p>
 <div class="cell" data-execution_count="27">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Score on Testing Data: </span><span class="sc">{</span>plr<span class="sc">.</span>score(X_test, y_test)<span class="sc">.</span><span class="bu">round</span>(<span class="dv">3</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Score on Testing Data: </span><span class="sc">{</span>plr<span class="sc">.</span>score(X_test, y_test)<span class="sc">.</span><span class="bu">round</span>(<span class="dv">3</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Score on Testing Data: 0.812</code></pre>
 </div>
@@ -624,14 +628,14 @@ False Negative: Positive Data + Wrongly Classified Negative by Model
 True Positive: Positive Data + Classified Positive by Model
 </li></ol>
 <div class="cell" data-execution_count="72">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> plr.predict(X_test)</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y_test, y_pred)</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The Confusion Matrix:</span><span class="ch">\n</span><span class="ss"> </span><span class="sc">{</span>cm<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>tn, fp, fn, tp <span class="op">=</span> cm[<span class="dv">0</span>][<span class="dv">0</span>], cm[<span class="dv">0</span>][<span class="dv">1</span>], cm[<span class="dv">1</span>][<span class="dv">0</span>], cm[<span class="dv">1</span>][<span class="dv">1</span>]</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">True Negative: </span><span class="sc">{</span>tn<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"False Positive: </span><span class="sc">{</span>fp<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"False Negative: </span><span class="sc">{</span>fn<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"True Positive: </span><span class="sc">{</span>tp<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> plr.predict(X_test)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y_test, y_pred)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The Confusion Matrix:</span><span class="ch">\n</span><span class="ss"> </span><span class="sc">{</span>cm<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>tn, fp, fn, tp <span class="op">=</span> cm[<span class="dv">0</span>][<span class="dv">0</span>], cm[<span class="dv">0</span>][<span class="dv">1</span>], cm[<span class="dv">1</span>][<span class="dv">0</span>], cm[<span class="dv">1</span>][<span class="dv">1</span>]</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">True Negative: </span><span class="sc">{</span>tn<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"False Positive: </span><span class="sc">{</span>fp<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"False Negative: </span><span class="sc">{</span>fn<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"True Positive: </span><span class="sc">{</span>tp<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The Confusion Matrix:
  [[4593 1026]
@@ -675,8 +679,8 @@ That above is our confusion matrix with the information we talked about above. N
 <li>What is the overall accuracy of our model?</li>
 </ol>
 <div class="cell" data-execution_count="78">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>overallAccuracy <span class="op">=</span> ((tn <span class="op">+</span> tp)<span class="op">/</span>(tn <span class="op">+</span> tp <span class="op">+</span> fp <span class="op">+</span> fn)).<span class="bu">round</span>(<span class="dv">3</span>)</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Overall Accuracy of the Model is </span><span class="sc">{</span>overallAccuracy<span class="op">*</span><span class="dv">100</span><span class="sc">}</span><span class="ss">%"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>overallAccuracy <span class="op">=</span> ((tn <span class="op">+</span> tp)<span class="op">/</span>(tn <span class="op">+</span> tp <span class="op">+</span> fp <span class="op">+</span> fn)).<span class="bu">round</span>(<span class="dv">3</span>)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Overall Accuracy of the Model is </span><span class="sc">{</span>overallAccuracy<span class="op">*</span><span class="dv">100</span><span class="sc">}</span><span class="ss">%"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Overall Accuracy of the Model is 81.2%</code></pre>
 </div>
@@ -685,9 +689,9 @@ That above is our confusion matrix with the information we talked about above. N
 <li>What is the Positive Predictive Value (PPV) of our model?</li>
 </ol>
 <div class="cell" data-execution_count="79">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>ppv <span class="op">=</span> ((tp)<span class="op">/</span>(tp <span class="op">+</span> fp)).<span class="bu">round</span>(<span class="dv">3</span>)</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"PPV of the Model: </span><span class="sc">{</span>ppv<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"This means that </span><span class="sc">{</span>ppv<span class="sc">}</span><span class="ss"> of all positive predictions made by the model are actually correct!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>ppv <span class="op">=</span> ((tp)<span class="op">/</span>(tp <span class="op">+</span> fp)).<span class="bu">round</span>(<span class="dv">3</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"PPV of the Model: </span><span class="sc">{</span>ppv<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"This means that </span><span class="sc">{</span>ppv<span class="sc">}</span><span class="ss"> of all positive predictions made by the model are actually correct!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>PPV of the Model: 0.755
 This means that 0.755 of all positive predictions made by the model are actually correct!</code></pre>
@@ -697,12 +701,12 @@ This means that 0.755 of all positive predictions made by the model are actually
 <li>What are the overall False Positive and False Negative Rates (FPR and FNR) for our model?</li>
 </ol>
 <div class="cell" data-execution_count="83">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>fpr <span class="op">=</span> ((fp)<span class="op">/</span>(fp <span class="op">+</span> tn)).<span class="bu">round</span>(<span class="dv">3</span>)</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>fnr <span class="op">=</span> ((fn)<span class="op">/</span>(fn <span class="op">+</span> tp)).<span class="bu">round</span>(<span class="dv">3</span>)</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"FPR of the Model: </span><span class="sc">{</span>fpr<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"This means that </span><span class="sc">{</span>fpr<span class="sc">}</span><span class="ss"> of all negative examples were wrongly classified as positive!"</span>)</span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">FNR of the Model: </span><span class="sc">{</span>fnr<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"This means that </span><span class="sc">{</span>fnr<span class="sc">}</span><span class="ss"> of all positive examples were wrongly classified as negative!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>fpr <span class="op">=</span> ((fp)<span class="op">/</span>(fp <span class="op">+</span> tn)).<span class="bu">round</span>(<span class="dv">3</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>fnr <span class="op">=</span> ((fn)<span class="op">/</span>(fn <span class="op">+</span> tp)).<span class="bu">round</span>(<span class="dv">3</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"FPR of the Model: </span><span class="sc">{</span>fpr<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"This means that </span><span class="sc">{</span>fpr<span class="sc">}</span><span class="ss"> of all negative examples were wrongly classified as positive!"</span>)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">FNR of the Model: </span><span class="sc">{</span>fnr<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"This means that </span><span class="sc">{</span>fnr<span class="sc">}</span><span class="ss"> of all positive examples were wrongly classified as negative!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>FPR of the Model: 0.183
 This means that 0.183 of all negative examples were wrongly classified as positive!
@@ -716,24 +720,24 @@ This means that 0.196 of all positive examples were wrongly classified as negati
 <h3 class="anchored" data-anchor-id="by-group-measures">By-Group Measures</h3>
 <p>Now, we can go ahead and look at the: Overall Accuracy, PPV, FPR, and FNR for each the 9 subgroups (the different racial groups):</p>
 <div class="cell" data-execution_count="103">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">4</span>)) <span class="op">+</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">5</span>,<span class="dv">7</span>)) <span class="op">+</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">8</span>,<span class="dv">10</span>)):</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Group </span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">:"</span>)</span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    ix <span class="op">=</span> X_test[group_test <span class="op">==</span> i, :]</span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    y_testx <span class="op">=</span> y_test[group_test <span class="op">==</span> i]</span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    y_predx <span class="op">=</span> plr.predict(ix)</span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    cm <span class="op">=</span> confusion_matrix(y_testx, y_predx)</span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>    tn, fp, fn, tp <span class="op">=</span> cm[<span class="dv">0</span>][<span class="dv">0</span>], cm[<span class="dv">0</span>][<span class="dv">1</span>], cm[<span class="dv">1</span>][<span class="dv">0</span>], cm[<span class="dv">1</span>][<span class="dv">1</span>]</span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>    overallAccuracy <span class="op">=</span> (((tn <span class="op">+</span> tp)<span class="op">/</span>(tn <span class="op">+</span> tp <span class="op">+</span> fp <span class="op">+</span> fn)) <span class="op">*</span> <span class="dv">100</span>).<span class="bu">round</span>(<span class="dv">2</span>)</span>
-<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>    ppv <span class="op">=</span> ((tp)<span class="op">/</span>(tp <span class="op">+</span> fp)).<span class="bu">round</span>(<span class="dv">3</span>)</span>
-<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>    fpr <span class="op">=</span> ((fp)<span class="op">/</span>(fp <span class="op">+</span> tn)).<span class="bu">round</span>(<span class="dv">3</span>)</span>
-<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>    fnr <span class="op">=</span> ((fn)<span class="op">/</span>(fn <span class="op">+</span> tp)).<span class="bu">round</span>(<span class="dv">3</span>)</span>
-<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Overall Accuracy: </span><span class="sc">{</span>overallAccuracy<span class="sc">}</span><span class="ss">%"</span>)</span>
-<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"PPV of the Model: </span><span class="sc">{</span>ppv<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"This means that </span><span class="sc">{</span>ppv<span class="sc">}</span><span class="ss"> of all positive predictions made by the model are actually correct!"</span>)</span>
-<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"FPR of the Model: </span><span class="sc">{</span>fpr<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"This means that </span><span class="sc">{</span>fpr<span class="sc">}</span><span class="ss"> of all negative examples were wrongly classified as positive!"</span>)</span>
-<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"nFNR of the Model: </span><span class="sc">{</span>fnr<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"This means that </span><span class="sc">{</span>fnr<span class="sc">}</span><span class="ss"> of all positive examples were wrongly classified as negative!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">4</span>)) <span class="op">+</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">5</span>,<span class="dv">7</span>)) <span class="op">+</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">8</span>,<span class="dv">10</span>)):</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Group </span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">:"</span>)</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    ix <span class="op">=</span> X_test[group_test <span class="op">==</span> i, :]</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    y_testx <span class="op">=</span> y_test[group_test <span class="op">==</span> i]</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    y_predx <span class="op">=</span> plr.predict(ix)</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    cm <span class="op">=</span> confusion_matrix(y_testx, y_predx)</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    tn, fp, fn, tp <span class="op">=</span> cm[<span class="dv">0</span>][<span class="dv">0</span>], cm[<span class="dv">0</span>][<span class="dv">1</span>], cm[<span class="dv">1</span>][<span class="dv">0</span>], cm[<span class="dv">1</span>][<span class="dv">1</span>]</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    overallAccuracy <span class="op">=</span> (((tn <span class="op">+</span> tp)<span class="op">/</span>(tn <span class="op">+</span> tp <span class="op">+</span> fp <span class="op">+</span> fn)) <span class="op">*</span> <span class="dv">100</span>).<span class="bu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    ppv <span class="op">=</span> ((tp)<span class="op">/</span>(tp <span class="op">+</span> fp)).<span class="bu">round</span>(<span class="dv">3</span>)</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>    fpr <span class="op">=</span> ((fp)<span class="op">/</span>(fp <span class="op">+</span> tn)).<span class="bu">round</span>(<span class="dv">3</span>)</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>    fnr <span class="op">=</span> ((fn)<span class="op">/</span>(fn <span class="op">+</span> tp)).<span class="bu">round</span>(<span class="dv">3</span>)</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Overall Accuracy: </span><span class="sc">{</span>overallAccuracy<span class="sc">}</span><span class="ss">%"</span>)</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"PPV of the Model: </span><span class="sc">{</span>ppv<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"This means that </span><span class="sc">{</span>ppv<span class="sc">}</span><span class="ss"> of all positive predictions made by the model are actually correct!"</span>)</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"FPR of the Model: </span><span class="sc">{</span>fpr<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"This means that </span><span class="sc">{</span>fpr<span class="sc">}</span><span class="ss"> of all negative examples were wrongly classified as positive!"</span>)</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"nFNR of the Model: </span><span class="sc">{</span>fnr<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"This means that </span><span class="sc">{</span>fnr<span class="sc">}</span><span class="ss"> of all positive examples were wrongly classified as negative!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Group 1:
