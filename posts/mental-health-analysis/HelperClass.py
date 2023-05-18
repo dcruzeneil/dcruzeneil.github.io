@@ -28,7 +28,7 @@ class HelperClass:
         X = pd.DataFrame(counts.toarray(), columns = vectorizer.get_feature_names_out())
         X = X.to_numpy()
         y = dfY.to_numpy()
-        y = 1 * (y==4) 
+        y = np.where(y == 0, -1, np.where(y == 4, 1, y))
         return X, y
     
     def sentencePredict(self, sentence, vectorizer):
