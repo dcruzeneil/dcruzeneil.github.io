@@ -8,7 +8,7 @@
 
 <meta name="author" content="Neil Dcruze">
 <meta name="dcterms.date" content="2023-03-28">
-<meta name="description" content="ABCDEFGH">
+<meta name="description" content="Training a Model to predict Employment for Different Individuals and then Audit the Model to Display Potential Biases across different Racial Groups">
 
 <title>Machine Learning - Auditing Allocative Bias</title>
 <style>
@@ -182,7 +182,7 @@ background-size: cover;
       <h1 class="title">Auditing Allocative Bias</h1>
                   <div>
         <div class="description">
-          ABCDEFGH
+          Training a Model to predict Employment for Different Individuals and then Audit the Model to Display Potential Biases across different Racial Groups
         </div>
       </div>
                 </div>
@@ -232,7 +232,7 @@ Performing a “fairness audit” in order to assess whether our algorithm displ
 <section id="loading-and-setting-up-the-data" class="level1">
 <h1>Loading and Setting Up the Data</h1>
 <p>First, let us load the data and prepare it for our purposes:</p>
-<div class="cell" data-execution_count="44">
+<div class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> folktables <span class="im">import</span> ACSDataSource, ACSEmployment, BasicProblem, adult_filter</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -258,9 +258,9 @@ Performing a “fairness audit” in order to assess whether our algorithm displ
 </div>
 </div>
 <p>Now, let us examine the first few rows of the data, to get an idea of it:</p>
-<div class="cell" data-execution_count="30">
+<div class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>acs_data.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="30">
+<div class="cell-output cell-output-display" data-execution_count="12">
 
 <div>
 
@@ -418,12 +418,12 @@ Performing a “fairness audit” in order to assess whether our algorithm displ
 </div>
 </div>
 </div>
-<p>Each row in the above dataset corresponds to an individual citizen of Texas who filled out the PUMS survey of 2018. Therefore, what we have is a <span class="math inline">\(n\)</span>x<span class="math inline">\(p\)</span> matrix, where <span class="math inline">\(n\)</span> = number of data points, and <span class="math inline">\(p\)</span> = number of features. We can see that there are a bunch of features in this dataset, and all of them might not be pertinent for our analysis. Therefore, we are only going to choose the features which are relevant for this blog post:</p>
-<div class="cell" data-execution_count="31">
+<p>Each row in the above dataset corresponds to an individual citizen of New York who filled out the PUMS survey of 2018. Therefore, what we have is a <span class="math inline">\(n\)</span>x<span class="math inline">\(p\)</span> matrix, where <span class="math inline">\(n\)</span> = number of data points, and <span class="math inline">\(p\)</span> = number of features. We can see that there are a bunch of features in this dataset, and all of them might not be pertinent for our analysis. Therefore, we are only going to choose the features which are relevant for this blog post:</p>
+<div class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>possible_features<span class="op">=</span>[<span class="st">'AGEP'</span>, <span class="st">'SCHL'</span>, <span class="st">'MAR'</span>, <span class="st">'RELP'</span>, <span class="st">'DIS'</span>, <span class="st">'ESP'</span>, <span class="st">'CIT'</span>, <span class="st">'MIG'</span>, <span class="st">'MIL'</span>, <span class="st">'ANC'</span>, <span class="st">'NATIVITY'</span>, <span class="st">'DEAR'</span>, <span class="st">'DEYE'</span>, <span class="st">'DREM'</span>, <span class="st">'SEX'</span>, <span class="st">'RAC1P'</span>, <span class="st">'ESR'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now, since we want to predict <i>ESR</i> - Employment Status, based on every relevant feature except the <i>RAC1P</i> - Race, we want to remove these two features from the list of <i>possible_features</i>. This is because one of these features is our target (output), and the we are excluding the other one (race) to study racial bias in our machine learning model:</p>
-<div class="cell" data-execution_count="32">
+<div class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>features_to_use <span class="op">=</span> [f <span class="cf">for</span> f <span class="kw">in</span> possible_features <span class="cf">if</span> f <span class="kw">not</span> <span class="kw">in</span> [<span class="st">"ESR"</span>, <span class="st">"RAC1P"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 Now that we know:
@@ -436,7 +436,7 @@ Target (ESR): the thing we are trying to predict
 Group (RAC1P): the group by which we wish to audit the bias
 </li></ol>
 <p>We can go ahead and create a <i>BasicProblem</i>:</p>
-<div class="cell" data-execution_count="33">
+<div class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>EmploymentProblem <span class="op">=</span> BasicProblem(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    features<span class="op">=</span>features_to_use,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    target<span class="op">=</span><span class="st">'ESR'</span>,</span>
@@ -447,31 +447,31 @@ Group (RAC1P): the group by which we wish to audit the bias
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we can go ahead and extract our feature matrix, output labels vector, and the group (race) vector as numpy objects:</p>
-<div class="cell" data-execution_count="34">
+<div class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>features, label, group <span class="op">=</span> EmploymentProblem.df_to_numpy(acs_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now, that we have all the necessary data, we can split our data into <i>training data</i> and <i>testing data</i>. Here, 80% of the data will be used for training and the remaining 20% will be used for testing:</p>
-<div class="cell" data-execution_count="35">
+<div class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test, group_train, group_test <span class="op">=</span> train_test_split(features, label, group, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="basic-descriptives" class="level1">
 <h1>Basic Descriptives</h1>
 <p>Now, that we have our data set up, we can address some basic descriptives of the data which will aid us in our analysis later on. For this it is useful to make a <i>data frame</i> out of our data:</p>
-<div class="cell" data-execution_count="36">
+<div class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(X_train, columns <span class="op">=</span> features_to_use)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"group"</span>] <span class="op">=</span> group_train</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"label"</span>] <span class="op">=</span> y_train</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Question 1: How many individuals are in the data?</p>
-<div class="cell" data-execution_count="37">
+<div class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Answer 1: There are </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> people in the training data set!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Answer 1: There are 157573 people in the training data set!</code></pre>
 </div>
 </div>
 <p>Question 2: Of these individuals, what proportion have target label equal to 1? In employment prediction, these would correspond to employed individuals.</p>
-<div class="cell" data-execution_count="38">
+<div class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>employed <span class="op">=</span> df[df[<span class="st">'label'</span>]<span class="op">==</span><span class="va">True</span>]</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Answer 2: There are </span><span class="sc">{</span>employed<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> number of people in the training data set who are employed - have target label equal to True!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -479,7 +479,7 @@ Group (RAC1P): the group by which we wish to audit the bias
 </div>
 </div>
 <p>Question 3: Of these individuals, how many are in each of the groups? <br><br>Answer 3: We can see a breakdown of how many people of each racial group are employed:</p>
-<div class="cell" data-execution_count="39">
+<div class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(employed.groupby(<span class="st">'group'</span>).size())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>group
@@ -496,7 +496,7 @@ dtype: int64</code></pre>
 </div>
 </div>
 <p>Question 4: In each group, what proportion of individuals have target label equal to 1? <br><br>Answer 4: The proportion of individuals in each group who are employed (have target label 1):</p>
-<div class="cell" data-execution_count="40">
+<div class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.groupby([<span class="st">'group'</span>])[[<span class="st">'label'</span>]].aggregate([np.mean]).<span class="bu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      label
@@ -514,7 +514,7 @@ group
 </div>
 </div>
 <p>Question 5: Check for intersectional trends by studying the proportion of positive target labels broken out by your chosen group labels and an additional group label. For example, if you chose race (RAC1P) as your group, then you could also choose sex (SEX) and compute the proportion of positive labels by both race and sex. <br><br> Answer 5: For answering this question, first let us look at the positive labels broken down only by SEX. Then we can look at the intersectionality of RACE and SEX, by looking at positive labels broken down by these two group labels.</p>
-<div class="cell" data-execution_count="41">
+<div class="cell" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.groupby([<span class="st">'SEX'</span>])[[<span class="st">'label'</span>]].aggregate([np.mean]).<span class="bu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    label
@@ -525,7 +525,7 @@ SEX
 </div>
 </div>
 <p>We can see that: 49% of MEN (1.0) are employed, while 44% of WOMEN (2.0) are employed! Now let us look at the positive target labels broken down by both RACE and SEX:</p>
-<div class="cell" data-execution_count="42">
+<div class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.groupby([<span class="st">'group'</span>,<span class="st">'SEX'</span>])[[<span class="st">'label'</span>]].aggregate([np.mean]).<span class="bu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          label
@@ -552,7 +552,7 @@ group SEX
 </div>
 </div>
 <p>We can visualize this data using a bar chart for easier understanding:</p>
-<div class="cell" data-execution_count="43">
+<div class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>bplot <span class="op">=</span> sns.barplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">"group"</span>, y<span class="op">=</span><span class="st">"label"</span>, hue<span class="op">=</span><span class="st">"SEX"</span>, errorbar<span class="op">=</span>(<span class="st">'ci'</span>, <span class="dv">0</span>))</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>bplot.<span class="bu">set</span>(xlabel<span class="op">=</span><span class="st">"Different Racial Groups"</span>, ylabel<span class="op">=</span><span class="st">"Proportion of People Employed"</span>)</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>plt.show(bplot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -560,7 +560,7 @@ group SEX
 <p><img src="index_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
 </div>
 </div>
-<p>Therefore, it is apparent that the proportion of women who are employed, is less than the proportion of men who are employed, in all racial groups except racial group 2. Not only that, some racial groups have a really high disparity between the proportion of men who are employed versus the proportion of women who are employed. For instance, in racial group 7: the proportion of men who are employed is roughly 50%, while the proportion of women who are employed is only 14%.</p>
+<p>Therefore, it is apparent that the proportion of women who are employed, is less than the proportion of men who are employed, in almost all racial groups except racial group 2, 7, and 9. Not only that, some racial groups have a really high disparity between the proportion of men who are employed versus the proportion of women who are employed. For instance, in racial group 4: the proportion of men who are employed is roughly 100%, while the proportion of women who are employed is only 50%.</p>
 </section>
 <section id="training-the-model" class="level1">
 <h1>Training the Model</h1>
@@ -576,40 +576,40 @@ Creating a Logistic Regression model with the best number of degrees that we fou
 Checking the performance of our model on the <i>testing data</i>
 </li></ol>
 <p>Let us get started with creating the function which utilizes Pipeline, for easier construction of our Logistic Regression models:</p>
-<div class="cell" data-execution_count="16">
+<div class="cell" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> polyLR(deg):</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> Pipeline([(<span class="st">"poly"</span>, PolynomialFeatures(degree <span class="op">=</span> deg)),</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                   (<span class="st">"LR"</span>, LogisticRegression(penalty <span class="op">=</span> <span class="va">None</span>, max_iter <span class="op">=</span> <span class="dv">1000</span>))])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now, we can use cross-validation to select which degree (number of polynomial features) works best for our data. The main principle behind cross-validation is that you can divide your training data into <span class="math inline">\(k\)</span> folds (chunks), and then train your model over <span class="math inline">\(k-1\)</span> chunks and then <i>validate</i> it over the last remaining chunk. Therefore, if you divide your training data into <span class="math inline">\(4\)</span> chunks - let us say - then each one of the <span class="math inline">\(4\)</span> chunks will act as the <i>validation data</i> once, with the rest of the chunks being used as <i>training data</i>. Therefore, in case of <span class="math inline">\(4\)</span> chunks, the <u>fit</u> function will be called <span class="math inline">\(4\)</span> times. Now, we can find the <i>mean</i> cross-validation score for varying degrees (number of polynomial features), and the degree which has the highest cross-validation score is most likely to perform the best on the <i>testing data</i>:</p>
-<div class="cell" data-execution_count="17">
+<div class="cell" data-execution_count="28">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> deg <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">5</span>):</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    plr <span class="op">=</span> polyLR(deg <span class="op">=</span> deg)</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    cv_scores <span class="op">=</span> cross_val_score(plr, X_train, y_train, cv <span class="op">=</span> <span class="dv">5</span>)</span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    mean_score <span class="op">=</span> cv_scores.mean()</span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Polynomial Degree = </span><span class="sc">{</span>deg<span class="sc">}</span><span class="ss">, Score = </span><span class="sc">{</span>mean_score<span class="sc">.</span><span class="bu">round</span>(<span class="dv">3</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Polynomial Degree = 0, Score = 0.591
-Polynomial Degree = 1, Score = 0.78
-Polynomial Degree = 2, Score = 0.809
-Polynomial Degree = 3, Score = 0.806
+<pre><code>Polynomial Degree = 0, Score = 0.535
+Polynomial Degree = 1, Score = 0.772
+Polynomial Degree = 2, Score = 0.811
+Polynomial Degree = 3, Score = 0.809
 Polynomial Degree = 4, Score = 0.806</code></pre>
 </div>
 </div>
 <p>Therefore, for our purposes it seems that Polynomial Degree = <span class="math inline">\(2\)</span> yields the best results during our cross-validation, so we can assume that this degree is also likely to perform the best on our <i>testing data</i>. Now, we can go ahead and create a Logistic Regression model with degrees = <span class="math inline">\(2\)</span>:</p>
-<div class="cell" data-execution_count="26">
+<div class="cell" data-execution_count="29">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>plr <span class="op">=</span> polyLR(deg <span class="op">=</span> <span class="dv">2</span>)</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>plr.fit(X_train, y_train)</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Score on Training Data: </span><span class="sc">{</span>plr<span class="sc">.</span>score(X_train, y_train)<span class="sc">.</span><span class="bu">round</span>(<span class="dv">3</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Score on Training Data: 0.81</code></pre>
+<pre><code>Score on Training Data: 0.811</code></pre>
 </div>
 </div>
 <p>Now, finally we can check the performance of our model on the <i>testing data</i>:</p>
-<div class="cell" data-execution_count="27">
+<div class="cell" data-execution_count="30">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Score on Testing Data: </span><span class="sc">{</span>plr<span class="sc">.</span>score(X_test, y_test)<span class="sc">.</span><span class="bu">round</span>(<span class="dv">3</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Score on Testing Data: 0.812</code></pre>
+<pre><code>Score on Testing Data: 0.811</code></pre>
 </div>
 </div>
 <p>Therefore, we can see that we achieved approximately <span class="math inline">\(81\)</span>% accuracy on our <i>testing data</i>!</p>
@@ -627,7 +627,7 @@ False Negative: Positive Data + Wrongly Classified Negative by Model
 </li><li>
 True Positive: Positive Data + Classified Positive by Model
 </li></ol>
-<div class="cell" data-execution_count="72">
+<div class="cell" data-execution_count="31">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> plr.predict(X_test)</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y_test, y_pred)</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The Confusion Matrix:</span><span class="ch">\n</span><span class="ss"> </span><span class="sc">{</span>cm<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -638,13 +638,13 @@ True Positive: Positive Data + Classified Positive by Model
 <span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"True Positive: </span><span class="sc">{</span>tp<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The Confusion Matrix:
- [[4593 1026]
- [ 772 3165]]
+ [[16235  4952]
+ [ 2491 15716]]
 
-True Negative: 4593
-False Positive: 1026
-False Negative: 772
-True Positive: 3165</code></pre>
+True Negative: 16235
+False Positive: 4952
+False Negative: 2491
+True Positive: 15716</code></pre>
 </div>
 </div>
 That above is our confusion matrix with the information we talked about above. Now, it is useful to define some concepts and associated formulae:
@@ -678,29 +678,29 @@ That above is our confusion matrix with the information we talked about above. N
 <ol type="1">
 <li>What is the overall accuracy of our model?</li>
 </ol>
-<div class="cell" data-execution_count="78">
+<div class="cell" data-execution_count="33">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>overallAccuracy <span class="op">=</span> ((tn <span class="op">+</span> tp)<span class="op">/</span>(tn <span class="op">+</span> tp <span class="op">+</span> fp <span class="op">+</span> fn)).<span class="bu">round</span>(<span class="dv">3</span>)</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Overall Accuracy of the Model is </span><span class="sc">{</span>overallAccuracy<span class="op">*</span><span class="dv">100</span><span class="sc">}</span><span class="ss">%"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Overall Accuracy of the Model is </span><span class="sc">{</span>np<span class="sc">.</span><span class="bu">round</span>(overallAccuracy<span class="op">*</span><span class="dv">100</span>,<span class="dv">3</span>)<span class="sc">}</span><span class="ss">%"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Overall Accuracy of the Model is 81.2%</code></pre>
+<pre><code>Overall Accuracy of the Model is 81.1%</code></pre>
 </div>
 </div>
 <ol start="2" type="1">
 <li>What is the Positive Predictive Value (PPV) of our model?</li>
 </ol>
-<div class="cell" data-execution_count="79">
+<div class="cell" data-execution_count="34">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>ppv <span class="op">=</span> ((tp)<span class="op">/</span>(tp <span class="op">+</span> fp)).<span class="bu">round</span>(<span class="dv">3</span>)</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"PPV of the Model: </span><span class="sc">{</span>ppv<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"This means that </span><span class="sc">{</span>ppv<span class="sc">}</span><span class="ss"> of all positive predictions made by the model are actually correct!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>PPV of the Model: 0.755
-This means that 0.755 of all positive predictions made by the model are actually correct!</code></pre>
+<pre><code>PPV of the Model: 0.76
+This means that 0.76 of all positive predictions made by the model are actually correct!</code></pre>
 </div>
 </div>
 <ol start="3" type="1">
 <li>What are the overall False Positive and False Negative Rates (FPR and FNR) for our model?</li>
 </ol>
-<div class="cell" data-execution_count="83">
+<div class="cell" data-execution_count="35">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>fpr <span class="op">=</span> ((fp)<span class="op">/</span>(fp <span class="op">+</span> tn)).<span class="bu">round</span>(<span class="dv">3</span>)</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>fnr <span class="op">=</span> ((fn)<span class="op">/</span>(fn <span class="op">+</span> tp)).<span class="bu">round</span>(<span class="dv">3</span>)</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"FPR of the Model: </span><span class="sc">{</span>fpr<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -708,19 +708,19 @@ This means that 0.755 of all positive predictions made by the model are actually
 <span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">FNR of the Model: </span><span class="sc">{</span>fnr<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"This means that </span><span class="sc">{</span>fnr<span class="sc">}</span><span class="ss"> of all positive examples were wrongly classified as negative!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>FPR of the Model: 0.183
-This means that 0.183 of all negative examples were wrongly classified as positive!
+<pre><code>FPR of the Model: 0.234
+This means that 0.234 of all negative examples were wrongly classified as positive!
 
-FNR of the Model: 0.196
-This means that 0.196 of all positive examples were wrongly classified as negative!</code></pre>
+FNR of the Model: 0.137
+This means that 0.137 of all positive examples were wrongly classified as negative!</code></pre>
 </div>
 </div>
 </section>
 <section id="by-group-measures" class="level3">
 <h3 class="anchored" data-anchor-id="by-group-measures">By-Group Measures</h3>
-<p>Now, we can go ahead and look at the: Overall Accuracy, PPV, FPR, and FNR for each the 9 subgroups (the different racial groups):</p>
-<div class="cell" data-execution_count="103">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">4</span>)) <span class="op">+</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">5</span>,<span class="dv">7</span>)) <span class="op">+</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">8</span>,<span class="dv">10</span>)):</span>
+<p>Now, we can go ahead and look at the: Overall Accuracy, PPV, FPR, and FNR for each the 9 subgroups (the different racial groups). We cannot calculate the statistics for <i>Group 4: Alaskan Natives</i> due to lack of sufficient sample:</p>
+<div class="cell" data-execution_count="39">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">1</span>,<span class="dv">4</span>)) <span class="op">+</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">5</span>, <span class="dv">10</span>)):</span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Group </span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">:"</span>)</span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    ix <span class="op">=</span> X_test[group_test <span class="op">==</span> i, :]</span>
 <span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    y_testx <span class="op">=</span> y_test[group_test <span class="op">==</span> i]</span>
@@ -736,83 +736,124 @@ This means that 0.196 of all positive examples were wrongly classified as negati
 <span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"This means that </span><span class="sc">{</span>ppv<span class="sc">}</span><span class="ss"> of all positive predictions made by the model are actually correct!"</span>)</span>
 <span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"FPR of the Model: </span><span class="sc">{</span>fpr<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"This means that </span><span class="sc">{</span>fpr<span class="sc">}</span><span class="ss"> of all negative examples were wrongly classified as positive!"</span>)</span>
-<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"nFNR of the Model: </span><span class="sc">{</span>fnr<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"FNR of the Model: </span><span class="sc">{</span>fnr<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"This means that </span><span class="sc">{</span>fnr<span class="sc">}</span><span class="ss"> of all positive examples were wrongly classified as negative!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Group 1:
-Overall Accuracy: 81.05%
-PPV of the Model: 0.764
-This means that 0.764 of all positive predictions made by the model are actually correct!
-FPR of the Model: 0.187
-This means that 0.187 of all negative examples were wrongly classified as positive!
-nFNR of the Model: 0.193
-This means that 0.193 of all positive examples were wrongly classified as negative!
+Overall Accuracy: 81.62%
+PPV of the Model: 0.772
+This means that 0.772 of all positive predictions made by the model are actually correct!
+FPR of the Model: 0.223
+This means that 0.223 of all negative examples were wrongly classified as positive!
+FNR of the Model: 0.139
+This means that 0.139 of all positive examples were wrongly classified as negative!
 
 Group 2:
-Overall Accuracy: 81.71%
-PPV of the Model: 0.729
-This means that 0.729 of all positive predictions made by the model are actually correct!
-FPR of the Model: 0.165
-This means that 0.165 of all negative examples were wrongly classified as positive!
-nFNR of the Model: 0.214
-This means that 0.214 of all positive examples were wrongly classified as negative!
+Overall Accuracy: 80.6%
+PPV of the Model: 0.734
+This means that 0.734 of all positive predictions made by the model are actually correct!
+FPR of the Model: 0.24
+This means that 0.24 of all negative examples were wrongly classified as positive!
+FNR of the Model: 0.133
+This means that 0.133 of all positive examples were wrongly classified as negative!
 
 Group 3:
-Overall Accuracy: 76.92%
-PPV of the Model: 0.7
-This means that 0.7 of all positive predictions made by the model are actually correct!
-FPR of the Model: 0.188
-This means that 0.188 of all negative examples were wrongly classified as positive!
-nFNR of the Model: 0.3
-This means that 0.3 of all positive examples were wrongly classified as negative!
-
-Group 5:
-Overall Accuracy: 50.0%
-PPV of the Model: 0.5
-This means that 0.5 of all positive predictions made by the model are actually correct!
-FPR of the Model: 0.5
-This means that 0.5 of all negative examples were wrongly classified as positive!
-nFNR of the Model: 0.5
-This means that 0.5 of all positive examples were wrongly classified as negative!
-
-Group 6:
-Overall Accuracy: 73.08%
-PPV of the Model: 0.677
-This means that 0.677 of all positive predictions made by the model are actually correct!
-FPR of the Model: 0.396
-This means that 0.396 of all negative examples were wrongly classified as positive!
-nFNR of the Model: 0.137
-This means that 0.137 of all positive examples were wrongly classified as negative!
-
-Group 8:
-Overall Accuracy: 87.1%
-PPV of the Model: 0.81
-This means that 0.81 of all positive predictions made by the model are actually correct!
-FPR of the Model: 0.145
-This means that 0.145 of all negative examples were wrongly classified as positive!
-nFNR of the Model: 0.105
-This means that 0.105 of all positive examples were wrongly classified as negative!
-
-Group 9:
-Overall Accuracy: 83.14%
+Overall Accuracy: 73.4%
 PPV of the Model: 0.667
 This means that 0.667 of all positive predictions made by the model are actually correct!
+FPR of the Model: 0.278
+This means that 0.278 of all negative examples were wrongly classified as positive!
+FNR of the Model: 0.25
+This means that 0.25 of all positive examples were wrongly classified as negative!
+
+Group 5:
+Overall Accuracy: 78.72%
+PPV of the Model: 0.682
+This means that 0.682 of all positive predictions made by the model are actually correct!
+FPR of the Model: 0.241
+This means that 0.241 of all negative examples were wrongly classified as positive!
+FNR of the Model: 0.167
+This means that 0.167 of all positive examples were wrongly classified as negative!
+
+Group 6:
+Overall Accuracy: 78.42%
+PPV of the Model: 0.733
+This means that 0.733 of all positive predictions made by the model are actually correct!
+FPR of the Model: 0.324
+This means that 0.324 of all negative examples were wrongly classified as positive!
+FNR of the Model: 0.107
+This means that 0.107 of all positive examples were wrongly classified as negative!
+
+Group 7:
+Overall Accuracy: 70.59%
+PPV of the Model: 0.5
+This means that 0.5 of all positive predictions made by the model are actually correct!
+FPR of the Model: 0.417
+This means that 0.417 of all negative examples were wrongly classified as positive!
+FNR of the Model: 0.0
+This means that 0.0 of all positive examples were wrongly classified as negative!
+
+Group 8:
+Overall Accuracy: 77.95%
+PPV of the Model: 0.722
+This means that 0.722 of all positive predictions made by the model are actually correct!
+FPR of the Model: 0.267
+This means that 0.267 of all negative examples were wrongly classified as positive!
+FNR of the Model: 0.164
+This means that 0.164 of all positive examples were wrongly classified as negative!
+
+Group 9:
+Overall Accuracy: 85.9%
+PPV of the Model: 0.77
+This means that 0.77 of all positive predictions made by the model are actually correct!
 FPR of the Model: 0.144
 This means that 0.144 of all negative examples were wrongly classified as positive!
-nFNR of the Model: 0.234
-This means that 0.234 of all positive examples were wrongly classified as negative!</code></pre>
+FNR of the Model: 0.136
+This means that 0.136 of all positive examples were wrongly classified as negative!</code></pre>
 </div>
 </div>
 </section>
 <section id="bias-measures" class="level3">
 <h3 class="anchored" data-anchor-id="bias-measures">Bias Measures</h3>
+<section id="is-the-model-approximately-calibrated" class="level5">
+<h5 class="anchored" data-anchor-id="is-the-model-approximately-calibrated"><font color="green">Is the model approximately <i>calibrated</i>?</font></h5>
+<p>The results clearly show that the <i>PPV</i> varies across the different racial groups. Therefore, our model is not calibrated. For example, if we compared Group 1 (White only): PPV = <span class="math inline">\(0.772\)</span> and Group 2 (Black only): PPV = <span class="math inline">\(0.734\)</span>. Therefore, <span class="math inline">\(\text{PPV}_\text{White} &gt; \text{PPV}_\text{Black}\)</span>, which means that the probability that a positive prediction made by the model is correct, is higher for white people, compared to black people.</p>
+</section>
+<section id="does-the-model-satisfy-approximate-error-rate-balance" class="level5">
+<h5 class="anchored" data-anchor-id="does-the-model-satisfy-approximate-error-rate-balance"><font color="green">Does the model satisfy approximate <i>error rate balance</i>?</font></h5>
+<p>The model does not satisfy approximate <i>error rate balance</i>. This is because the <i>FPR</i> and <i>FNR</i> is different across different racial groups. For example, analyzing Group 1 (White only) and Group 2 (Black only): <span class="math inline">\((\text{FPR}_\text{White} = 0.223) &lt; (\text{FPR}_\text{Black}= 0.24)\)</span>, and <span class="math inline">\((\text{FNR}_\text{White} = 0.139) &gt; (\text{FNR}_\text{Black}= 0.133)\)</span>. Therefore, for FPR: the model is more likely to wrongly classify negative examples (not employed) as positive (employed) for Black people compared to White people. For FNR: the model is more likely to wrongly classify positive examples (employed) as negative (not employed) for White people compared to Black people. Therefore, the model makes different types of mistakes more often, across different racial groups.</p>
+</section>
+<section id="does-the-model-satisfy-statistical-parity" class="level5">
+<h5 class="anchored" data-anchor-id="does-the-model-satisfy-statistical-parity"><font color="green">Does the model satisfy <i>statistical parity</i>?</font></h5>
+<p>Since, our model has different values of <i>PPV</i> for different racial groups - our model does not satisfy <i>statistical parity</i>!</p>
+</section>
 </section>
 </section>
 <section id="concluding-discussions" class="level1">
 <h1>Concluding Discussions</h1>
+<section id="what-groups-of-people-could-stand-to-benefit-from-a-system-hat-kinds-of-companies-might-want-to-buy-your-model-for-commercial-use" class="level5">
+<h5 class="anchored" data-anchor-id="what-groups-of-people-could-stand-to-benefit-from-a-system-hat-kinds-of-companies-might-want-to-buy-your-model-for-commercial-use"><font color="green">What groups of people could stand to benefit from a system? hat kinds of companies might want to buy your model for commercial use?</font></h5>
+<p>Since this model predicts whether a person is employed or not, based on other demographic factors. This model could be used to automate or cross-check the process of providing unemployment benefits to individuals. Since this model is more likely to classify unemployed Black people as employed, and more likely to classify employed White people as unemployed, if there were a model which gave people unemployment benefits based on the results of this model - White people would benefit!</p>
+</section>
+<section id="what-could-be-the-impact-of-deploying-your-model-for-large-scale-prediction-in-commercial-or-governmental-settings-do-you-feel-that-your-model-displays-problematic-bias" class="level5">
+<h5 class="anchored" data-anchor-id="what-could-be-the-impact-of-deploying-your-model-for-large-scale-prediction-in-commercial-or-governmental-settings-do-you-feel-that-your-model-displays-problematic-bias"><font color="green">What could be the impact of deploying your model for large-scale prediction in commercial or governmental settings? Do you feel that your model displays problematic bias?</font></h5>
+Deploying a model like this for large-scale prediction in commercial or governmental settings will be problematic. This is because, as discussed above: the model will make different kinds of mistakes for different racial groups. Therefore, certain racial groups will benefit more than others - for instance, if the model is used to decide who gets unemployment benefits. Furthermore, this model displays problematic bias. As discussed in the <i>Bias Measures</i> the model is not (does not satisfy):
+<ol>
+<li>
+Calibrated: probability that a positive prediction made by model is correct is different across racial groups
+</li><li>
+Approximate Error Rate Balance: will make different kinds of mistakes for different racial groups
+</li><li>
+Statistical Parity: model does not satisfy Statistical Parity (different <i>PPV</i>) for different racial groups
+</li></ol>
+</section>
+<section id="are-there-other-potential-problems-associated-with-deploying-your-model-that-make-you-uncomfortable-how-would-you-propose-addressing-some-of-these-problems" class="level5">
+<h5 class="anchored" data-anchor-id="are-there-other-potential-problems-associated-with-deploying-your-model-that-make-you-uncomfortable-how-would-you-propose-addressing-some-of-these-problems"><font color="green">Are there other potential problems associated with deploying your model that make you uncomfortable? How would you propose addressing some of these problems?</font></h5>
+<p>If this model were to be used for government purposes: deciding unemployment benefits (mentioned above), I would not feel very comfortable. This is because the model first of all has its own problems and biases, and furthermore automating a process which affects an individual (and humans) so much is very inhumane, as the errors of the model can deeply affect people. If the model did not exhibit the problmatic biases discussed above, then maybe the model would be slightly better for deployment. However, it would still not be ideal according to me.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
