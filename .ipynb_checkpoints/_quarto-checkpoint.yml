@@ -2,13 +2,18 @@ project:
   type: website
   output-dir: docs
 
+styles:
+    - styles.css
+    
 website:
   title: "Neil Rohan Dcruze"
   #output-dir: docs
   navbar:
-    background: "#112a39"
+    #background: "#112a39"
     right:
       - about.qmd
+      - text: "Blog"
+        file: index.qmd
       - icon: github
         href: https://github.com/dcruzeneil
       - icon: twitter
@@ -18,7 +23,7 @@ website:
 
 format:
   html:
-    title-block-banner: img/landscape.png
+    title-block-banner: img/starry_night.jpg
     title-block-banner-color: white
     theme: cosmo
     css: styles.css
