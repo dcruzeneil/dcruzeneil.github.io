@@ -3,7 +3,7 @@ project:
   output-dir: docs
 
 website:
-  title: "Machine Learning"
+  title: "Neil Rohan Dcruze"
   #output-dir: docs
   navbar:
     background: "#112a39"
@@ -13,6 +13,8 @@ website:
         href: https://github.com/dcruzeneil
       - icon: twitter
         href: https://twitter.com/dcruze_neil
+      - icon: linkedin
+        href: https://www.linkedin.com/in/neildcruze/
 
 format:
   html:
