@@ -16,4 +16,7 @@ about:
 
 ---
 
-Neil Rohan Dcruze
+Neil Rohan Dcruze<br>
+Middlebury College 2025<br>
+Major: Computer Science<br>
+Minor: Mathematics
