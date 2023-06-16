@@ -176,22 +176,40 @@ w = (w_1, w_2, w_3,....., w_d) \\
 \text{where  } w \in \mathbb{R}^{d} \\
 b \rightarrow \text{bias}
 \]</span></p>
-<p>For an example: <span class="math inline">\((x, y)\)</span> where <span class="math inline">\(x \in \mathbb{R}^{d} \text{ where d = number of features, and } y = \pm 1\)</span> is the true label!</p>
+<p>For an example: <span class="math inline">\((x, y)\)</span> where <span class="math inline">\(x \in \mathbb{R}^{d}\)</span> and <span class="math inline">\(d\)</span> = number of features, and <span class="math inline">\(y = \pm 1\)</span> is the true label!</p>
 <section id="when-actual-label-y-1-but-activation-a-0" class="level4">
 <h4 class="anchored" data-anchor-id="when-actual-label-y-1-but-activation-a-0"><font color="green">When Actual Label: <span class="math inline">\(y = +1\)</span> but Activation: <span class="math inline">\(a &lt; 0\)</span> </font></h4>
 <p>Let us say, an example is of a positive label: <span class="math inline">\(y = +1\)</span>, but our activation is wrong, <span class="math inline">\(a &lt; 0\)</span>!</p>
-<p>Updating weights and bias: <span class="math inline">\(w^{'} = (w_{1}^{'}, w_{2}^{'}, w_{3}^{'},......, w_{d}^{'}) \text{ and } b^{'}\)</span></p>
+<p>Updating the weights and bias, we have a modified weight vector <span class="math inline">\(w^{'}\)</span> and a modified bias <span class="math inline">\(b^{'}\)</span>: <span class="math inline">\(w^{'} = (w_{1}^{'}, w_{2}^{'}, w_{3}^{'},......, w_{d}^{'})\)</span> and <span class="math inline">\(b^{'}\)</span></p>
 <p>When we observe the same example again, we compute the new activation <span class="math inline">\(a^{'}\)</span>:</p>
 <p><span class="math display">\[
 a^{'} = \sum_{d = 1}^{D}w_{d}^{'}x_{d} + b^{'} = \sum_{d = 1}^{D}(w_{d} + yx_{d})x_{d} + (b + y)
 \]</span></p>
 <p>Since, <span class="math inline">\(y = +1\)</span>: <span class="math display">\[
-a^{'} = \sum_{d = 1}^{D}(w_{d} + x_{d})x_{d} + (b + 1)
+a^{'} = \sum_{d = 1}^{D}(w_{d} + x_{d})x_{d} + (b + 1) \\
+= \sum_{d = 1}^{D}w_{d}x_{d} + \sum_{d = 1}^{D}(x_{d})^{2} + b + 1 \\
+= [\sum_{d = 1}^{D}w_{d}x_{d} + b] + \sum_{d = 1}^{D}(x_{d})^{2} + 1
 \]</span></p>
+<p>Since, <span class="math inline">\(a \text{ (the old activation)}\)</span> = <span class="math inline">\(\sum_{d = 1}^{D}w_{d}x_{d} + b\)</span>, we have: <span class="math display">\[
+a^{'} = a + \sum_{d = 1}^{D}(x_{d})^{2} + 1 \text{ which makes } a^{'} &gt; a
+\]</span> Since, <span class="math inline">\((x_d)^{2} \geq 0\)</span>, <span class="math inline">\(a^{'}\)</span> is always at least 1 more than <span class="math inline">\(a\)</span>. Since our activation a was <span class="math inline">\(a &lt; 0\)</span>, and <span class="math inline">\(y\)</span> was <span class="math inline">\(y = +1\)</span>, we have successfully moved <span class="math inline">\(a^{'}\)</span> in the right direction i.e.&nbsp;towards positive!</p>
 </section>
 <section id="when-actual-label-y--1-but-activation-a-0" class="level4">
 <h4 class="anchored" data-anchor-id="when-actual-label-y--1-but-activation-a-0"><font color="green">When Actual Label: <span class="math inline">\(y = -1\)</span> but Activation: <span class="math inline">\(a &gt; 0\)</span> </font></h4>
-<p>f</p>
+<p>Let us say, an example is of a positive label: <span class="math inline">\(y = -1\)</span>, but our activation is wrong, <span class="math inline">\(a &gt; 0\)</span>!</p>
+<p>Updating the weights and bias, we have a modified weight vector <span class="math inline">\(w^{'}\)</span> and a modified bias <span class="math inline">\(b^{'}\)</span>: <span class="math inline">\(w^{'} = (w_{1}^{'}, w_{2}^{'}, w_{3}^{'},......, w_{d}^{'})\)</span> and <span class="math inline">\(b^{'}\)</span></p>
+<p>When we observe the same example again, we compute the new activation <span class="math inline">\(a^{'}\)</span>:</p>
+<p><span class="math display">\[
+a^{'} = \sum_{d = 1}^{D}w_{d}^{'}x_{d} + b^{'} = \sum_{d = 1}^{D}(w_{d} + yx_{d})x_{d} + (b + y)
+\]</span></p>
+<p>Since, <span class="math inline">\(y = -1\)</span>: <span class="math display">\[
+a^{'} = \sum_{d = 1}^{D}(w_{d} - x_{d})x_{d} + (b - 1) \\
+= \sum_{d = 1}^{D}w_{d}x_{d} - \sum_{d = 1}^{D}(x_{d})^{2} + b - 1 \\
+= [\sum_{d = 1}^{D}w_{d}x_{d} + b] - [\sum_{d = 1}^{D}(x_{d})^{2} + 1]
+\]</span></p>
+<p>Since, <span class="math inline">\(a \text{ (the old activation)}\)</span> = <span class="math inline">\(\sum_{d = 1}^{D}w_{d}x_{d} + b\)</span>, we have: <span class="math display">\[
+a^{'} = a - [\sum_{d = 1}^{D}(x_{d})^{2} + 1] \text{ which makes } a^{'} &lt; a
+\]</span> Since, <span class="math inline">\((x_d)^{2} \geq 0\)</span>, <span class="math inline">\(a^{'}\)</span> is always at least 1 les than <span class="math inline">\(a\)</span>. Since our activation a was <span class="math inline">\(a &gt; 0\)</span>, and <span class="math inline">\(y\)</span> was <span class="math inline">\(y = -1\)</span>, we have successfully moved <span class="math inline">\(a^{'}\)</span> in the right direction i.e.&nbsp;towards negative!</p>
 
 
 </section>
