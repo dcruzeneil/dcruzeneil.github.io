@@ -168,12 +168,15 @@ background-size: cover;
 <h1>Perceptron Learning Rule</h1>
 <p>The Perceptron Learning Rule is based on an update which only happens when the activation (related to the predicted label) is different from the actual label. In the situation where the activation and the actual label are the same, no update takes places!</p>
 <p>The learning rule is based on the following mathematical formula: <span class="math display">\[
-w_{d} = w_{d} + yx{_d}\\
+w_{d} = w_{d} + yx{_d}
+\]</span> <span class="math display">\[
 b = b + y
 \]</span> where y is the actual label value!</p>
 <p>We have current parameters, <span class="math display">\[
-w = (w_1, w_2, w_3,....., w_d) \\
-\text{where  } w \in \mathbb{R}^{d} \\
+w = (w_1, w_2, w_3,....., w_d)
+\]</span> <span class="math display">\[
+\text{where  } w \in \mathbb{R}^{d}
+\]</span> <span class="math display">\[
 b \rightarrow \text{bias}
 \]</span></p>
 <p>For an example: <span class="math inline">\((x, y)\)</span> where <span class="math inline">\(x \in \mathbb{R}^{d}\)</span> and <span class="math inline">\(d\)</span> = number of features, and <span class="math inline">\(y = \pm 1\)</span> is the true label!</p>
@@ -186,8 +189,10 @@ b \rightarrow \text{bias}
 a^{'} = \sum_{d = 1}^{D}w_{d}^{'}x_{d} + b^{'} = \sum_{d = 1}^{D}(w_{d} + yx_{d})x_{d} + (b + y)
 \]</span></p>
 <p>Since, <span class="math inline">\(y = +1\)</span>: <span class="math display">\[
-a^{'} = \sum_{d = 1}^{D}(w_{d} + x_{d})x_{d} + (b + 1) \\
-= \sum_{d = 1}^{D}w_{d}x_{d} + \sum_{d = 1}^{D}(x_{d})^{2} + b + 1 \\
+a^{'} = \sum_{d = 1}^{D}(w_{d} + x_{d})x_{d} + (b + 1)
+\]</span> <span class="math display">\[
+= \sum_{d = 1}^{D}w_{d}x_{d} + \sum_{d = 1}^{D}(x_{d})^{2} + b + 1
+\]</span> <span class="math display">\[
 = [\sum_{d = 1}^{D}w_{d}x_{d} + b] + \sum_{d = 1}^{D}(x_{d})^{2} + 1
 \]</span></p>
 <p>Since, <span class="math inline">\(a \text{ (the old activation)}\)</span> = <span class="math inline">\(\sum_{d = 1}^{D}w_{d}x_{d} + b\)</span>, we have: <span class="math display">\[
@@ -203,13 +208,15 @@ a^{'} = a + \sum_{d = 1}^{D}(x_{d})^{2} + 1 \text{ which makes } a^{'} &gt; a
 a^{'} = \sum_{d = 1}^{D}w_{d}^{'}x_{d} + b^{'} = \sum_{d = 1}^{D}(w_{d} + yx_{d})x_{d} + (b + y)
 \]</span></p>
 <p>Since, <span class="math inline">\(y = -1\)</span>: <span class="math display">\[
-a^{'} = \sum_{d = 1}^{D}(w_{d} - x_{d})x_{d} + (b - 1) \\
-= \sum_{d = 1}^{D}w_{d}x_{d} - \sum_{d = 1}^{D}(x_{d})^{2} + b - 1 \\
+a^{'} = \sum_{d = 1}^{D}(w_{d} - x_{d})x_{d} + (b - 1)
+\]</span> <span class="math display">\[
+= \sum_{d = 1}^{D}w_{d}x_{d} - \sum_{d = 1}^{D}(x_{d})^{2} + b - 1
+\]</span> <span class="math display">\[
 = [\sum_{d = 1}^{D}w_{d}x_{d} + b] - [\sum_{d = 1}^{D}(x_{d})^{2} + 1]
 \]</span></p>
 <p>Since, <span class="math inline">\(a \text{ (the old activation)}\)</span> = <span class="math inline">\(\sum_{d = 1}^{D}w_{d}x_{d} + b\)</span>, we have: <span class="math display">\[
 a^{'} = a - [\sum_{d = 1}^{D}(x_{d})^{2} + 1] \text{ which makes } a^{'} &lt; a
-\]</span> Since, <span class="math inline">\((x_d)^{2} \geq 0\)</span>, <span class="math inline">\(a^{'}\)</span> is always at least 1 les than <span class="math inline">\(a\)</span>. Since our activation a was <span class="math inline">\(a &gt; 0\)</span>, and <span class="math inline">\(y\)</span> was <span class="math inline">\(y = -1\)</span>, we have successfully moved <span class="math inline">\(a^{'}\)</span> in the right direction i.e.&nbsp;towards negative!</p>
+\]</span> Since, <span class="math inline">\((x_d)^{2} \geq 0\)</span>, <span class="math inline">\(a^{'}\)</span> is always at least 1 less than <span class="math inline">\(a\)</span>. Since our activation a was <span class="math inline">\(a &gt; 0\)</span>, and <span class="math inline">\(y\)</span> was <span class="math inline">\(y = -1\)</span>, we have successfully moved <span class="math inline">\(a^{'}\)</span> in the right direction i.e.&nbsp;towards negative!</p>
 
 
 </section>
