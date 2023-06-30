@@ -2,8 +2,6 @@
   {
     "listing": "/index.html",
     "items": [
-      "/posts/transformers/index.html",
-      "/posts/text-generation/index.html",
       "/posts/mental-health-analysis/index.html",
       "/posts/deep-music/index.html",
       "/posts/optimization-adam/index.html",
