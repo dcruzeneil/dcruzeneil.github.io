@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/video-classification/index.html",
       "/posts/mental-health-analysis/index.html",
       "/posts/deep-music/index.html",
       "/posts/optimization-adam/index.html",
