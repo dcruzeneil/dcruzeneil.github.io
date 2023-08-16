@@ -164,8 +164,21 @@ background-size: cover;
 
 
 
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>We are acquainted with using Convolutional Neural Networks (CNNs) to classify images, at the same time we are familiar with using Long Short-Term Memory (LSTM) for sequential data - where context is important. However, we can combine both of these things to train a model which can perform <u>video classification</u>! In this blog post, we are going to actualize video classification, by training a model which can recognize <u>Human Activities</u>.</p>
+<p>Before we go any further, it is imperative to understand that videos, in fact, are made up of a lot of images!</p>
+</section>
+<section id="understanding-the-model" class="level1">
+<h1>Understanding the Model</h1>
+<p>Levaraging the fact that a video is a <u><b>series</b></u> of <u><b>images</b></u>, we can use a ConvLSTM network. In this approach we first extract visual features from each frame of the video, and then pass these visual features into an LSTM network which can understand the series relationship between these visual features - therefore, helping us achieve our goal of video classification, or in this case - Human Activity Recognition.</p>
+</section>
+<section id="importing-the-required-libraries" class="level1">
+<h1>Importing the Required Libraries</h1>
+<p>First, let us start by importing the required libraries:</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
