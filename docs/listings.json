@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/custom-memory-allocator/index.html",
       "/posts/video-classification/index.html",
       "/posts/mental-health-analysis/index.html",
       "/posts/deep-music/index.html",
