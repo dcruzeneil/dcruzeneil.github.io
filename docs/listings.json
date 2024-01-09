@@ -3,19 +3,14 @@
     "listing": "/index.html",
     "items": [
       "/posts/custom-memory-allocator/index.html",
-      "/posts/video-classification/index.html",
       "/posts/mental-health-analysis/index.html",
-      "/posts/deep-music/index.html",
-      "/posts/optimization-adam/index.html",
-      "/posts/penguin-classification/index.html",
       "/posts/unsupervised-learning/index.html",
       "/posts/auditing-allocative-bias/index.html",
       "/posts/linear-regression/index.html",
       "/posts/kernel-logistic-regression/index.html",
       "/posts/gradient-descent/index.html",
       "/posts/perceptron-proof/index.html",
-      "/posts/perceptron-algorithm/index.html",
-      "/posts/data-structures/index.html"
+      "/posts/perceptron-algorithm/index.html"
     ]
   }
 ]
