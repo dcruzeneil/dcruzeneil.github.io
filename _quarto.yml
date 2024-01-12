@@ -6,25 +6,23 @@ styles:
     - styles.css
     
 website:
-  title: "Neil Rohan Dcruze"
-  #output-dir: docs
   navbar:
-    #background: "#112a39"
+    search: false
+    background-color: "#000000"
     right:
-      - about.qmd
+      - text: "Home"
+        file: ./index.html
       - text: "Blog"
-        file: index.qmd
-      - icon: github
-        href: https://github.com/dcruzeneil
-      - icon: twitter
-        href: https://twitter.com/dcruze_neil
-      - icon: linkedin
-        href: https://www.linkedin.com/in/neildcruze/
+        file: blog.qmd
+      - text: "Projects"
+        file: project.qmd
+      - text: "Work"
+        file: ./work.html
+      - text: "CV"
+        file: ./cv.pdf
 
 format:
   html:
-    title-block-banner: img/starry_night.jpg
-    title-block-banner-color: white
     theme: cosmo
     css: styles.css
 
