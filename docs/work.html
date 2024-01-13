@@ -6,11 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Neil Dcruze">
-<meta name="dcterms.date" content="2023-12-19">
-<meta name="description" content="Writing a Custom Memory Allocator (my own implementation of malloc) in C in an attempt to understand System Calls, and how we can use them more efficiently.">
 
-<title>Custom Memory Allocator in C</title>
+<title>Neil Dcruze</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -26,22 +23,21 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../../">
-<script src="../../site_libs/quarto-html/quarto.js"></script>
-<script src="../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -63,7 +59,7 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-fixed fullcontent">
@@ -78,22 +74,21 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html">Home</a>
+    <a class="nav-link active" href="./index.html" aria-current="page">Home</a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../blog.html">Blog</a>
+    <a class="nav-link" href="./blog.html">Blog</a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../project.html">Projects</a>
+    <a class="nav-link" href="./project.html">Projects</a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../work.html">Work</a>
+    <a class="nav-link" href="./work.html">Work</a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../cv.pdf">CV</a>
+    <a class="nav-link" href="./cv.pdf">CV</a>
   </li>  
 </ul>
-              <div id="quarto-search" class="" title="Search"></div>
           </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
@@ -104,49 +99,35 @@ ul.task-list li input[type="checkbox"] {
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Custom Memory Allocator in C</h1>
-  <div class="quarto-categories">
-    <div class="quarto-category">Systems Programming</div>
-    <div class="quarto-category">In Progress</div>
-  </div>
-  </div>
-
 <div>
-  <div class="description">
-    Writing a Custom Memory Allocator (my own implementation of malloc) in C in an attempt to understand System Calls, and how we can use them more efficiently.
-  </div>
+<h1>Work Experience</h1>
+
+<hr>
+<p><b>Data Scientist - Middlebury Consulting Group</b>
+<br><i>September 2023 - Present</i>
+<br>• Providing support to early-stage startups and local organizations through data analysis and by facilitating data-driven decision-making through the application of machine learning models 
+<br>• Collaborating with World Data Lab to assist them in modelling European Union subnational spending across different demographic groups (at the county level)</p>
+
+<hr>
+<p><b>Machine Learning Research Intern - Indian Institute of Technology</b>
+<br><i>June 2023 - August 2023</i>
+<br>• Collaborated with researchers on an AAAI 2024 conference paper, pioneering the GENETT (GEnder NEutralizing
+Text Transformation) framework which boosts performance in content preservation (BLEU) and fluency (PPL)
+<br>• This framework used auto-encoders, vector quantization, and a Neutrality-Infused Stylization (NIS) module to
+effectively generate gender-neutral content while upholding the intended and original meaning of the text
+<br>• Contributed to the unprecedented GENRE dataset, which is the first of its kind for GEnder Neutralized REvisions</p>
+
+<hr>
+<p><b>Software Engineer Intern - Gram Vaani</b>
+<br><i>July 2022 - August 2022</i>
+<br>• Used Django in conjunction with WhatsApp API to develop a Sexual Health and Awareness WhatsApp chatbot,
+enabling rural Indian users to access resources and receive answers to their queries in their local language
+<br>• Enhanced chatbot quality by identifying gaps in the response and optimizing text pre-processing techniques
+</p>
+
+<hr>
 </div>
-
-
-<div class="quarto-title-meta">
-
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Neil Dcruze </p>
-          </div>
-  </div>
-    
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">December 19, 2023</p>
-    </div>
-  </div>
-    
-  </div>
-  
-
-</header>
-
-
-
-
-</main> <!-- /main -->
+<!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -167,13 +148,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
-  const icon = "";
-  const anchorJS = new window.AnchorJS();
-  anchorJS.options = {
-    placement: 'right',
-    icon: icon
-  };
-  anchorJS.add('.anchored');
   const clipboard = new window.ClipboardJS('.code-copy-button', {
     target: function(trigger) {
       return trigger.previousElementSibling;

@@ -11,15 +11,15 @@ website:
     background-color: "#000000"
     right:
       - text: "Home"
-        file: ./index.html
+        file: index.html
       - text: "Blog"
         file: blog.qmd
       - text: "Projects"
         file: project.qmd
       - text: "Work"
-        file: ./work.html
+        file: work.html
       - text: "CV"
-        file: ./cv.pdf
+        file: cv.pdf
 
 format:
   html:
