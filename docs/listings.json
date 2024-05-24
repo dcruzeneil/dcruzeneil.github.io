@@ -14,6 +14,7 @@
   {
     "listing": "/project.html",
     "items": [
+      "/projects/neural-network-python/index.html",
       "/projects/custom-memory-allocator/index.html",
       "/projects/mental-health-analysis/index.html"
     ]
