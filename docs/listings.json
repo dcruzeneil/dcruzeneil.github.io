@@ -2,6 +2,7 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/posts/renaming-files-ufs2/index.html",
       "/posts/unsupervised-learning/index.html",
       "/posts/auditing-allocative-bias/index.html",
       "/posts/linear-regression/index.html",
@@ -14,7 +15,6 @@
   {
     "listing": "/project.html",
     "items": [
-      "/projects/neural-network-python/index.html",
       "/projects/custom-memory-allocator/index.html",
       "/projects/mental-health-analysis/index.html"
     ]
