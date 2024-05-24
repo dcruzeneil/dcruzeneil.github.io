@@ -143,8 +143,38 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
+<section id="understanding-ufs2-and-file-renaming" class="level1">
+<h1>Understanding UFS2 and File Renaming</h1>
+<p>Github: <a href="https://github.com/dcruzeneil/rename-command">dcruzeneil/rename-command</a></p>
+<p>The UFS2 (Unix File System) is supported by many Unix-based operating systems. In this project, I wrote a C program to traverse the structures used by UFS2 to represent files and directories, focusing on renaming files. This process provided valuable insights into how UFS2 manages file names, permissions, file contents, and their representation on the disk.</p>
+This blog post is not a comprehensive breakdown of UFS2, but it covers some key concepts:
+<ol>
+<li>
+<b>Superblock</b>: This structure contains metadata about the entire file system, such as fragment size and the location of the root inode.
+</li><li>
+<b>Directory Structures</b>: Each directory structure points to an inode (except the root directory, which just has an inode). It contains the inode number, file/directory name, and file type (directory, file, or other).
+</li><li>
+<b>Inode</b>: Each file and folder has an associated inode that stores permissions and other metadata. For folders, the inode’s data blocks point to other directory structures for the files/folders within that inode. For files, the data blocks point to the actual data.
+</li></ol>
+<p>Data blocks refer to 32K chunks of memory on the disk.</p>
+<section id="demonstration-of-the-rename-command" class="level2">
+<h2 class="anchored" data-anchor-id="demonstration-of-the-rename-command">Demonstration of the Rename Command</h2>
+<p>Before renaming the files using my command, I ran my implementation of <code>fs-find</code> to list all the files in the raw image of a disk partition. Here is the output:</p>
+<center>
+<img src="fs-find-old.png">
+</center>
+<p><br> Next, I ran the rename command:</p>
+<center>
+<img src="rename_command.png">
+</center>
+<p><br> Finally, here is the output of <code>fs-find</code> after executing the rename command:</p>
+<center>
+<img src="fs-find-new.png">
+</center>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
