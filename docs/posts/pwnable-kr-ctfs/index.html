@@ -251,7 +251,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Output: <code>4660</code></p>
 <p>So, to set <code>fd=0</code>, we have to pass in <code>4660</code> as the input. We run the program:</p>
 <pre class="shell"><code>./fd 4660</code></pre>
-<p>and voila, we are allowed to enter a string. Now we can simply write “LETMEWIN\n” (without the quotes, and meaning an actual press of the return key), and behold the flag is:</p>
+<p>and voila, we are allowed to enter a string. Now we can simply write “LETMEWIN\n” (without the quotes, and \n meaning an actual press of the return key), and behold the flag is:</p>
 <p><code>flag</code>: mommy! I think I know what a file descriptor is!!</p>
 <p><b>Question:</b> How are we not able to use <code>cat flag</code> to output the contents due to permission issues, but when we ourselves run this <code>fd</code> program with the correct input, we are able to access the contents of the file? After all, the process <code>fd</code> was run by us non-privileged users.</p>
 <p><b>Answer:</b> If you run <code>ls -l</code> and look at the permissions, you will notice an <code>s</code> in the owner’s execute permissions. Something like: <code>-r-sr-x---</code>. This is called the <code>setuid</code> bit, and any program with the <code>setuid</code> bit set will run with the permissions of the owner. Therefore, when we correctly execute the program, it is able to print the content of the file “flag” as it is running with the permissions of the owner of the “flag” file, rather than with our permissions.</p>
