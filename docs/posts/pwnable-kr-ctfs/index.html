@@ -240,9 +240,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 <p>As expected, the <code>flag</code> file does not have read permissions for us. So, let’s examine the code. We can run the following command to output the contents of the <code>fd.c</code> file:</p>
 <pre class="shell"><code>cat fd.c</code></pre>
-<p>Upon examining the contents of the program, it is clear that we need a way to fill the string “LETMEWIN” into the <code>buf</code>. How? When we examine the read syscall closely, we see that it reads in from the file descriptor stored in <code>int fd</code>, which is essentially argv[1] converted to an int minus <code>0x1234</code>. Now, we need to understand the following building-blocks:</p>
+<p>Upon examining the contents of the program, it is clear that we need a way to fill the string “LETMEWIN\n” into the <code>buf</code>. How? When we examine the read syscall closely, we see that it reads in from the file descriptor stored in <code>int fd</code>, which is essentially argv[1] converted to an int minus <code>0x1234</code>. Now, we need to understand the following building-blocks:</p>
 <ul>
-<li>STDIN is 0: If we manage to set <code>int fd</code> to 0, it will allow us to write directly from the terminal. This means whatever we type into the terminal will be entered into <code>buf</code>, which is great because we can type “LETMEWIN”.</li>
+<li>STDIN is 0: If we manage to set <code>int fd</code> to 0, it will allow us to write directly from the terminal. This means whatever we type into the terminal will be entered into <code>buf</code>, which is great because we can type “LETMEWIN\n”.</li>
 </ul>
 <p>However, we see that:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> fd <span class="op">=</span> atoi<span class="op">(</span>argv<span class="op">[</span><span class="dv">1</span><span class="op">])</span> <span class="op">-</span> <span class="bn">0x1234</span><span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -251,7 +251,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Output: <code>4660</code></p>
 <p>So, to set <code>fd=0</code>, we have to pass in <code>4660</code> as the input. We run the program:</p>
 <pre class="shell"><code>./fd 4660</code></pre>
-<p>and voila, we are allowed to enter a string. Now we can simply write “LETMEWIN” (without the quotes, and meaning an actual press of the return key), and behold the flag is:</p>
+<p>and voila, we are allowed to enter a string. Now we can simply write “LETMEWIN\n” (without the quotes, and meaning an actual press of the return key), and behold the flag is:</p>
 <p><code>flag</code>: mommy! I think I know what a file descriptor is!!</p>
 <p><b>Question:</b> How are we not able to use <code>cat flag</code> to output the contents due to permission issues, but when we ourselves run this <code>fd</code> program with the correct input, we are able to access the contents of the file? After all, the process <code>fd</code> was run by us non-privileged users.</p>
 <p><b>Answer:</b> If you run <code>ls -l</code> and look at the permissions, you will notice an <code>s</code> in the owner’s execute permissions. Something like: <code>-r-sr-x---</code>. This is called the <code>setuid</code> bit, and any program with the <code>setuid</code> bit set will run with the permissions of the owner. Therefore, when we correctly execute the program, it is able to print the content of the file “flag” as it is running with the permissions of the owner of the “flag” file, rather than with our permissions.</p>
