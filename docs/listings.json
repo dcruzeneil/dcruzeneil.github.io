@@ -2,6 +2,7 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/posts/pwnable-kr-ctfs/index.html",
       "/posts/stack-based-buffer-overflow/index.html",
       "/posts/renaming-files-ufs2/index.html",
       "/posts/unsupervised-learning/index.html",
