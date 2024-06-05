@@ -2,6 +2,7 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/posts/little-endian-explained/index.html",
       "/posts/pwnable-kr-ctfs/index.html",
       "/posts/stack-based-buffer-overflow/index.html",
       "/posts/renaming-files-ufs2/index.html",
