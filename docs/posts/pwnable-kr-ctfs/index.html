@@ -125,6 +125,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   }
 }</script>
 
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -217,6 +218,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>
 <a href="#collision">collision</a>
 </li>
+<li>
+<a href="#bof">bof</a>
+</li>
 </ul>
 <li>
 <a href="#rookiss">Rookiss</a>
@@ -254,10 +258,72 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>and voila, we are allowed to enter a string. Now we can simply write “LETMEWIN\n” (without the quotes, and \n meaning an actual press of the return key), and behold the flag is:</p>
 <p><code>flag</code>: mommy! I think I know what a file descriptor is!!</p>
 <p><b>Question:</b> How are we not able to use <code>cat flag</code> to output the contents due to permission issues, but when we ourselves run this <code>fd</code> program with the correct input, we are able to access the contents of the file? After all, the process <code>fd</code> was run by us non-privileged users.</p>
-<p><b>Answer:</b> If you run <code>ls -l</code> and look at the permissions, you will notice an <code>s</code> in the owner’s execute permissions. Something like: <code>-r-sr-x---</code>. This is called the <code>setuid</code> bit, and any program with the <code>setuid</code> bit set will run with the permissions of the owner. Therefore, when we correctly execute the program, it is able to print the content of the file “flag” as it is running with the permissions of the owner of the “flag” file, rather than with our permissions.</p>
+<p><b>Answer:</b> If you run <code>ls -l</code> and look at the permissions, you will notice an <code>s</code> in the owner’s execute permissions. Something like: <code>-r-sr-x---</code>. This is called the <code>setuid</code> bit, and any program with the <code>setuid</code> bit set will run with the permissions of the owner. Therefore, when we correctly execute the program, it is able to print the content of the file “flag” as it is running with the permissions of the owner of “fd” file - who also happens to be the owner of the “flag” file. This happens instead of “fd” running with our permissions.</p>
 </section>
 <section id="collision" class="level4">
 <h4 class="anchored" data-anchor-id="collision"><a name="collision"></a><font color="red">collision</font></h4>
+<p>In this challenge, we need to use the <code>col</code> program to output the contents of the <code>flag</code> file, despite not having ‘read’ permission. To achieve this, we need to understand how the program works, especially the <code>check_password</code> function.</p>
+<section id="analyzing-the-col.c-program" class="level5">
+<h5 class="anchored" data-anchor-id="analyzing-the-col.c-program">Analyzing the <code>col.c</code> Program</h5>
+<section id="high-level-overview" class="level6">
+<h6 class="anchored" data-anchor-id="high-level-overview">High-Level Overview</h6>
+<ol type="1">
+<li>Command-Line Argument: we pass a command-line argument, which acts as the ‘password’.</li>
+<li>Password Length: the password must be exactly 20 bytes long.</li>
+<li>Password Check: the password is passed to the <code>check_password</code>, which verifies if it matches <code>0x21DD09EC</code>.</li>
+</ol>
+</section>
+</section>
+<section id="understanding-the-target-hash" class="level5">
+<h5 class="anchored" data-anchor-id="understanding-the-target-hash">Understanding the Target Hash</h5>
+<p>The <code>check_password</code> function returns a <code>long</code> vlaue. To understand our target, let us convert the hexadecimal value <code>0x21DD09EC</code> to its decimal representation:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">printf</span> <span class="st">"%d\n"</span> 0x21DD09EC</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Output: <code>568134124</code></p>
+<section id="check_password-function" class="level6">
+<h6 class="anchored" data-anchor-id="check_password-function"><code>check_password</code> function</h6>
+<p>The function takes a string input (a char pointer) and casts it into an <code>int</code> pointer. Here is how it processes the input: 1. Pointer Evaluation: the function evaluates the pointer 4 bytes at a time, doing this 5 times (20 bytes total). 2. Integer Addition: reads the first 4 bytes, interprets them as an <code>int</code>, adds this value to <code>res</code>.</p>
+<p><b>Code Explanation:</b> Here’s the relevant code snippet:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span><span class="op">*</span> ip <span class="op">=</span> <span class="op">(</span><span class="dt">int</span><span class="op">*)</span>p<span class="op">;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> i<span class="op">;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> res<span class="op">;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span><span class="op">(</span>i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">5</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    res <span class="op">+=</span> ip<span class="op">[</span>i<span class="op">];</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This code essentially finds different indices of the <code>int</code> pointer and adds the value that is pointed to at that memory address. An alternative approach could be:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span><span class="op">*</span> ip <span class="op">=</span> <span class="op">(</span><span class="dt">int</span><span class="op">*)</span>p<span class="op">;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> i<span class="op">;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> res<span class="op">;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span><span class="op">(</span>i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">5</span><span class="op">;</span> ip<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    res <span class="op">+=</span> <span class="op">*</span>ip<span class="op">;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In this version, since <code>ip</code> is an <code>int</code> pointer, <code>ip++</code> will automatically increase the value by 4 bytes, checking 5 integer values.</p>
+</section>
+</section>
+<section id="crafting-the-solution" class="level5">
+<h5 class="anchored" data-anchor-id="crafting-the-solution">Crafting the Solution</h5>
+<p>We need to pass values in the form of a string that, when evaluated as 5 <code>int</code>s, add up to <code>568134124</code>. ###### Calculating Integer Values First, let us divide <code>568134124</code> by 5: <span class="math inline">\(\frac{568134124}{5} = 113626824.8\)</span></p>
+<p>Since we cannot divide evenly, we adjust as follows: 1. int 1: <code>113626824</code> 2. Remaining Value: <span class="math inline">\(568134124\)</span> - <span class="math inline">\(113626824\)</span> = <span class="math inline">\(454507300\)</span> 3. Dividing Remaining Value: <span class="math inline">\(\frac{454507300}{4} = 113626825\)</span></p>
+<p>Thus, our integers are: * int 1: <code>113626824</code> * int 2: <code>113626825</code> * int 3: <code>113626825</code> * int 4: <code>113626825</code> * int 5: <code>113626825</code></p>
+<section id="convertion-to-hexadecimal" class="level6">
+<h6 class="anchored" data-anchor-id="convertion-to-hexadecimal">Convertion to Hexadecimal</h6>
+<p>We have to convert these integes to hexadecimal: * int 1: <code>113626824</code> = <code>0x6C5CEC8</code> * int 2 - 5: <code>113626825</code> = <code>0x6C5CEC9</code></p>
+<p>To make this exactly 4 bytes, we add a leading zero: * <code>0x06C5CEC8</code> and <code>0x06C5CEC9</code></p>
+</section>
+<section id="implementing-the-solution" class="level6">
+<h6 class="anchored" data-anchor-id="implementing-the-solution">Implementing the Solution</h6>
+<p>We use perl to construct the input string:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./col</span> <span class="va">$(</span><span class="fu">perl</span> <span class="at">-e</span> <span class="st">'print "\x06\xC5\xCE\xC9" x 4 . "\x06\xC5\xCE\xC8"'</span><span class="va">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This should convert to <code>int</code>s that add up to <code>568134124</code>. However, due to little-endian architecture, we need to reverse the byte order:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./col</span> <span class="va">$(</span><span class="fu">perl</span> <span class="at">-e</span> <span class="st">'print "\xC9\xCE\xC5\x06" x 4 . "\xC8\xCE\xC5\x06"'</span><span class="va">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="flag" class="level5">
+<h5 class="anchored" data-anchor-id="flag">Flag</h5>
+<p><code>flag</code>: daddy! I just managed to create a hash collision :)</p>
+</section>
+</section>
+<section id="bof" class="level4">
+<h4 class="anchored" data-anchor-id="bof"><a name="bof"></a><font color="red">bof</font></h4>
 
 
 </section>
