@@ -35,7 +35,7 @@
         "name": "Linear Regression from Scratch",
         "image": "/assets/projects/linear_regression.png",
         "description": "Implemented both analytical and gradient descent solutions for linear regression using NumPy. Includes visualizations and convergence tracking for optimization.",
-        "link": "",
+        "link": "https://github.com/dcruzeneil/personal_blog_old/blob/main/posts/linear-regression/LinearRegression.py",
         "domain": ["Machine Learning"],
         "technology": ["Python", "NumPy", "Matplotlib"]
     },
@@ -43,7 +43,7 @@
         "name": "Logistic Regression (Batch & SGD)",
         "image": "/assets/projects/logistic_regression.png",
         "description": "Built a logistic regression model with both batch and stochastic gradient descent options. Supports momentum, convergence tracking, and performance visualization.",
-        "link": "",
+        "link": "https://github.com/dcruzeneil/personal_blog_old/blob/main/posts/gradient-descent/LogisticRegression.py",
         "domain": ["Machine Learning"],
         "technology": ["Python", "NumPy", "Matplotlib"]
     },
@@ -51,7 +51,7 @@
         "name": "Kernel Logistic Regression",
         "image": "/assets/projects/kernel_logistic_regression.png",
         "description": "Implemented kernelized logistic regression using custom kernel functions and loss optimization via SciPy. Designed to support nonlinear classification.",
-        "link": "",
+        "link": "https://github.com/dcruzeneil/personal_blog_old/blob/main/posts/kernel-logistic-regression/KernelLogisticRegression.py",
         "domain": ["Machine Learning"],
         "technology": ["Python", "NumPy"]
     },
@@ -59,7 +59,7 @@
         "name": "Perceptron Algorithm",
         "image": "/assets/projects/perceptron.png",
         "description": "Built a perceptron-based binary classifier with support for visualizing accuracy and decision boundaries. Implements iterative weight updates for linear separability.",
-        "link": "",
+        "link": "https://github.com/dcruzeneil/personal_blog_old/blob/main/posts/perceptron-algorithm/perceptron.py",
         "domain": ["Machine Learning"],
         "technology": ["Python", "NumPy", "Matplotlib"]
     }
