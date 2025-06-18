@@ -88,7 +88,7 @@ const skills = {
       //{ name: "Apache Spark", logo: sparkLogo },
     ]
   },
-  "Other Tools": {
+  "Tools & Operating Systems": {
     icon: toolsLogo,
     tools: [
       { name: "Git", logo: gitLogo },
@@ -120,7 +120,7 @@ export default function Skills() {
                 <img src={icon} alt={`${category} logo`} className="h-full w-full object-cover" />
               </div>
             </div>
-            <p className="text-xl font-semibold mb-4 dark:hover:text-[#39FF14] dark:hover:drop-shadow-[0_0_6px_#39FF14]">{category}</p>
+            <p className="text-lg font-semibold mb-4 dark:hover:text-[#39FF14] dark:hover:drop-shadow-[0_0_6px_#39FF14]">{category}</p>
             <ul className="space-y-3">
               {tools.map(({ name, logo }) => (
                 <li key={name} className="flex items-center gap-4">
