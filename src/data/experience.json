@@ -1,0 +1,79 @@
+[
+    {
+        "title": "Machine Learning Researcher",
+        "name": "Indian Instute of Technology",
+        "type": ["Work", "Research"],
+        "start_date": "Jun 2023",
+        "end_date": "Aug 2023",
+        "logo": "/assets/experience/iit_patna.png",
+        "description": [
+            "Developed GENETT, a PyTorch-based NLP framework for bias-neutral text transformation, achieving superior performance over 10 state-of-the-art models in content preservation (BLEU 54.1) and fluency (PPL 1.24).", 
+            "Created the first-of-its-kind GENRE dataset (5,230 samples), leveraging pandas and spaCy for preprocessing.", 
+            "Automated data workflows using Apache Airflow, reducing manual effort by 40% and boosting efficiency by 15%.", 
+            "Published in IJCAI 2024."
+        ],
+        "technology": ["Python", "PyTorch", "Transformer", "spaCy", "pandas", "Apache Airflow", "Git"],
+        "link": "https://www.ijcai.org/proceedings/2024/824"
+    },
+    {
+        "title": "Software Engineer Intern",
+        "name": "Gram Vaani",
+        "type": ["Work"],
+        "start_date": "Jul 2023",
+        "end_date": "Aug 2022",
+        "logo": "/assets/experience/gram_vaani.jpeg",
+        "description": [
+            "Created scalable Django APIs to support a WhatsApp chatbot serving 37,000 users in rural India.",
+            "Enhanced FAQ retrieval accuracy using BERT, reaching a 70% top-3 match rate.",
+            "Improved system performance by reducing API response times by 20% through optimized database indexing and asynchronous processing with Celery."
+        ],  
+        "technology": ["Django", "Python", "BERT", "Celery", "PostgreSQL", "REST APIs", "Git"],
+        "link": null
+    },
+    {
+        "title": "Student Tech Lead",
+        "name": "Information Technology Services",
+        "type": ["Work"],
+        "start_date": "Nov 2021",
+        "end_date": "May 2025",
+        "logo": "/assets/experience/midd_logo.png",
+        "description": [
+            "Managed a 10-member technical team to deliver reliable support for over 45 campus events annually.",
+            "Provided hands-on troubleshooting for Extron AV systems, resolving 3-5 integration issues weekly.",
+            "Automated service desk operations in TDX using Python scripts, saving 50+ hours of manual effort yearly.",
+            "Strengthened cross-functional communication and developed leadership, and client service skills in a fast-paced academic environment."
+        ],    
+        "technology": ["Python", "TDX (TeamDynamix)", "Extron AV", "Client Support", "Leadership"],
+        "link": null
+    },
+    {
+        "title": "Middlebury College",
+        "name": "",
+        "type": ["Education"],
+        "start_date": "Sep 2021",
+        "end_date": "May 2025",
+        "logo": "/assets/experience/midd_logo.png",
+        "description": [
+            "BA in Computer Science and Math Minor",
+            "Graduated Summa Cum Laude with CS Departmental Honors",
+            "Specialized in Operating Systems, Machine Learning, and Software Development.",
+            "GPA: 3.92/4.0"
+        ],   
+        "technology": [],
+        "link": null
+    },
+    {
+        "title": "UWC Mahindra College",
+        "name": "",
+        "type": ["Education"],
+        "start_date": "Aug 2019",
+        "end_date": "May 2021",
+        "logo": "/assets/experience/uwc_mahindra_logo.jpeg",
+        "description": [
+            "Completed the IB Diploma Programme, with a score of 40/45.",
+            "Led student initiatives in debate, community outreach, and fire fighting."
+        ], 
+        "technology": [],
+        "link": null
+    }
+]

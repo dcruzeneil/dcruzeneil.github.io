@@ -1,0 +1,66 @@
+[
+    {
+        "name": "UFS2 File System Explorer",
+        "image": "/assets/projects/ufs2_file_system_explorer.png",
+        "description": "Implemented a C program that parses raw UFS2 disk images and traverses the superblock, inode, and directory structures to display the hierarchical layout of files and folders.",
+        "link": "https://github.com/dcruzeneil/fs-find",
+        "domain": ["Systems Programming", "Operating Systems"],
+        "technology": ["C", "Filesystem", "Unix"]
+    },
+    {
+        "name": "Custom Memory Allocator",
+        "image": "/assets/projects/custom_memory_allocator.png",
+        "description": "Implemented custom versions of malloc, free, calloc, and realloc using the sbrk system call. Managed memory using metadata headers and optimized reuse with LD_PRELOAD testing on POSIX systems.",
+        "link": "https://github.com/dcruzeneil/custom-memory-allocator",
+        "domain": ["Systems Programming"],
+        "technology": ["C", "Memory Management", "Unix"]
+    },
+    {
+        "name": "Mental Health Analysis with Tweets",
+        "image": "/assets/projects/mental_health_analysis_with_tweets.png",
+        "description": "Applied machine learning to Twitter data to detect signals of depression and anxiety. Focused on improving early identification of mental health issues through NLP-based feature extraction.",
+        "link": "https://github.com/dcruzeneil/mental-health-analysis",
+        "domain": ["Machine Learning", "Natural Language Processing"],
+        "technology": ["Python", "scikit-learn", "pandas"]
+    },
+    {
+        "name": "Unix Shell Implementation",
+        "image": "/assets/projects/unix_shell_implementation.png",
+        "description": "Built a Unix-like shell from scratch in C with support for I/O redirection and multi-stage pipelines. The shell supports standard commands and mimics core Unix shell behavior.",
+        "link": "https://github.com/dcruzeneil/unix-shell-implementation",
+        "domain": ["Operating Systems", "Systems Programming"],
+        "technology": ["C", "Unix", "Makefile"]
+    },
+    {
+        "name": "Linear Regression from Scratch",
+        "image": "/assets/projects/linear_regression.png",
+        "description": "Implemented both analytical and gradient descent solutions for linear regression using NumPy. Includes visualizations and convergence tracking for optimization.",
+        "link": "",
+        "domain": ["Machine Learning"],
+        "technology": ["Python", "NumPy", "Matplotlib"]
+    },
+    {
+        "name": "Logistic Regression (Batch & SGD)",
+        "image": "/assets/projects/logistic_regression.png",
+        "description": "Built a logistic regression model with both batch and stochastic gradient descent options. Supports momentum, convergence tracking, and performance visualization.",
+        "link": "",
+        "domain": ["Machine Learning"],
+        "technology": ["Python", "NumPy", "Matplotlib"]
+    },
+    {
+        "name": "Kernel Logistic Regression",
+        "image": "/assets/projects/kernel_logistic_regression.png",
+        "description": "Implemented kernelized logistic regression using custom kernel functions and loss optimization via SciPy. Designed to support nonlinear classification.",
+        "link": "",
+        "domain": ["Machine Learning"],
+        "technology": ["Python", "NumPy"]
+    },
+    {
+        "name": "Perceptron Algorithm",
+        "image": "/assets/projects/perceptron.png",
+        "description": "Built a perceptron-based binary classifier with support for visualizing accuracy and decision boundaries. Implements iterative weight updates for linear separability.",
+        "link": "",
+        "domain": ["Machine Learning"],
+        "technology": ["Python", "NumPy", "Matplotlib"]
+    }
+]
