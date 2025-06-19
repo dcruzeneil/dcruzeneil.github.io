@@ -105,7 +105,7 @@ const skills = {
 
 export default function Skills() {
   return (
-    <section id="skills" className="relative py-24 px-6 md:px-24 bg-white dark:bg-[#1a1a1a] text-black dark:text-white font-poppins">
+    <section id="skills" className="relative py-32 lg:py-24 px-6 md:px-24 bg-white dark:bg-[#1a1a1a] text-black dark:text-white font-poppins">
       <div className="absolute top-30 right-6 sm:block hidden">
         <ScrollButton direction="up" targetId="about" />
       </div>

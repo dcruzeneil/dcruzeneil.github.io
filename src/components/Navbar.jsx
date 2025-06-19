@@ -33,8 +33,8 @@ export default function Navbar({ isDark, toggleTheme }) {
           <DarkModeToggle isDark={isDark} toggleTheme={toggleTheme}/>
         </div>
         <div className="md:hidden flex items-center gap-4">
-          <HamburgerMenu />
           <DarkModeToggle isDark={isDark} toggleTheme={toggleTheme} />
+          <HamburgerMenu />
         </div>
       </div>
     </nav>

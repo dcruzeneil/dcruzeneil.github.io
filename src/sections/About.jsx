@@ -33,7 +33,7 @@ export default function About({ isDark }) {
               alt="Middlebury College" 
               className="w-12 h-12 object-cover rounded-full" 
             />
-            <div className="flex flex-col">
+            <div className="flex flex-col w-full sm:w-auto">
               <span className="text-base font-medium text-black dark:text-white dark:hover:text-[#39FF14] dark:hover:drop-shadow-[0_0_6px_#39FF14]">
                 Middlebury College
               </span>
@@ -53,7 +53,7 @@ export default function About({ isDark }) {
               alt="UWC Mahindra College" 
               className="w-12 h-12 object-cover rounded-full" 
             />
-            <div className="flex flex-col">
+            <div className="flex flex-col w-full sm:w-auto">
               <span className="text-base font-medium text-black dark:text-white dark:hover:text-[#39FF14] dark:hover:drop-shadow-[0_0_6px_#39FF14]">
                 UWC Mahindra College
               </span>

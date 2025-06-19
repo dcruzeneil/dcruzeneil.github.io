@@ -1,13 +1,32 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 export default function HamburgerMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const closeMenu = () => setMenuOpen(false);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        closeMenu();
+      }
+    };
+
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [menuOpen]);
+
   return (
-    <div className="relative">
+    <div className="relative" ref={menuRef}>
       {/* Hamburger Icon */}
       <div
         className="flex flex-col justify-between w-7 h-5 cursor-pointer z-50 relative"
